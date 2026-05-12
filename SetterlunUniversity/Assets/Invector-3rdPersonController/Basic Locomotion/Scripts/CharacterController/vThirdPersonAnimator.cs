@@ -1,4 +1,4 @@
-﻿
+
 using UnityEngine;
 
 namespace Invector.vCharacterController
@@ -58,7 +58,7 @@ namespace Invector.vCharacterController
         protected override void OnDisable()
         {
             base.OnDisable();
-            animatorStateInfos.RemoveListener();
+            if (animatorStateInfos != null) animatorStateInfos.RemoveListener();
         }
 
         public virtual void UpdateAnimator()

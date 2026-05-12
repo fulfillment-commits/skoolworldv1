@@ -1,4 +1,4 @@
-﻿using System.Collections;
+using System.Collections;
 using UnityEngine;
 using UnityEngine.Events;
 
@@ -294,7 +294,7 @@ namespace Invector.vCharacterController
         /// <param name="value"></param>
         public virtual void ShowCursor(bool value)
         {
-            Cursor.visible = value;
+            Cursor.visible = true;
         }
 
         /// <summary>
@@ -303,14 +303,7 @@ namespace Invector.vCharacterController
         /// <param name="value"></param>
         public virtual void LockCursor(bool value)
         {
-            if (!value)
-            {
-                Cursor.lockState = CursorLockMode.Locked;
-            }
-            else
-            {
-                Cursor.lockState = CursorLockMode.None;
-            }
+            Cursor.lockState = CursorLockMode.None;
         }
 
         /// <summary>

@@ -19,7 +19,8 @@ public class GamePlayUIManager : MonoBehaviour
 
     public MoveCamera moveCamera;
 
-
+    [Header("Teleport UI")]
+    public GameObject Door;
 
     public static GamePlayUIManager Instance;
 

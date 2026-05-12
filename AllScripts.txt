@@ -1,0 +1,920 @@
+auth.js
+const express = require('express');
+const router = express.Router();
+const authController = require('../controllers/authController');
+
+// Register
+router.post('/register', authController.register);
+
+// Login
+router.post('/login', authController.login);
+
+module.exports = router;
+
+bricks.js
+const express = require('express');
+const router = express.Router();
+const { createBrick, getBricksByUser, updateBrick, listBricks } = require('../controllers/bricksController');
+
+router.post('/', createBrick);
+router.get('/:user_id', getBricksByUser);
+router.put('/:id', updateBrick);
+router.get('/', listBricks);
+
+module.exports = router;
+
+bussinesProfile.js
+const express = require('express');
+const router = express.Router();
+const { createBusiness, getBusiness, updateBusiness, listBusinesses } = require('../controllers/businessProfilesController');
+
+router.post('/', createBusiness);
+router.get('/:user_id', getBusiness);
+router.put('/:user_id', updateBusiness);
+router.get('/', listBusinesses);
+
+module.exports = router;
+
+companies.js
+const express = require('express');
+const router = express.Router();
+const { createCompany, getCompany, updateCompany, listCompanies } = require('../controllers/companiesController');
+
+router.post('/', createCompany);
+router.get('/:id', getCompany);
+router.put('/:id', updateCompany);
+router.get('/', listCompanies);
+
+module.exports = router;
+
+companyMembers.js
+const express = require('express');
+const router = express.Router();
+const { addMember, getMember, updateMember, listMembers } = require('../controllers/companyMembersController');
+
+router.post('/', addMember);
+router.get('/:id', getMember);
+router.put('/:id', updateMember);
+router.get('/', listMembers);
+
+module.exports = router;
+
+courses.js
+const express = require('express');
+const router = express.Router();
+const { createCourse, getCourse, updateCourse, listCourses } = require('../controllers/coursesController');
+
+router.post('/', createCourse);
+router.get('/:id', getCourse);
+router.put('/:id', updateCourse);
+router.get('/', listCourses);
+
+module.exports = router;
+
+onboardingSteps.js
+const express = require('express');
+const router = express.Router();
+const { createStep, getSteps, updateStep, listSteps } = require('../controllers/onboardingStepsController');
+
+router.post('/', createStep);
+router.get('/:user_id', getSteps);
+router.put('/:user_id/:step_number', updateStep);
+router.get('/', listSteps);
+
+module.exports = router;
+
+personalProfiles.js
+const express = require('express');
+const router = express.Router();
+const { createProfile, getProfile, updateProfile, listProfiles } = require('../controllers/personalProfilesController');
+
+router.post('/', createProfile);
+router.get('/:user_id', getProfile);
+router.put('/:user_id', updateProfile);
+router.get('/', listProfiles);
+
+module.exports = router;
+
+timeCapsules.js
+const express = require('express');
+const router = express.Router();
+const { createCapsule, getCapsulesByUser, listCapsules } = require('../controllers/timeCapsulesController');
+
+router.post('/', createCapsule);
+router.get('/:user_id', getCapsulesByUser);
+router.get('/', listCapsules);
+
+module.exports = router;
+
+userCourseAssignments.js
+const express = require('express');
+const router = express.Router();
+const { assignCourse, getUserCourses, updateUserCourse, listAssignments } = require('../controllers/userCourseAssignmentsController');
+
+router.post('/', assignCourse);
+router.get('/:user_id', getUserCourses);
+router.put('/:user_id/:course_id', updateUserCourse);
+router.get('/', listAssignments);
+
+module.exports = router;
+
+users.js
+const express = require('express');
+const router = express.Router();
+const { createUser, getUser, updateUser, listUsers } = require('../controllers/usersController');
+
+router.post('/', createUser);
+router.get('/:id', getUser);
+router.put('/:id', updateUser);
+router.get('/', listUsers);
+router.put('/:id', deleteUser);
+
+module.exports = router;
+
+authController.js
+const db = require('../db');
+const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
+
+const JWT_SECRET = "your_secret_key"; // change later
+
+// ✅ REGISTER
+exports.register = async (req, res) => {
+  try {
+    const { full_name, username, email, password } = req.body;
+
+    // Check if user exists
+    const [existing] = await db.query(
+      'SELECT id FROM users WHERE email = ? OR username = ?',
+      [email, username]
+    );
+
+    if (existing.length > 0) {
+      return res.status(400).json({ message: 'User already exists' });
+    }
+
+    // Hash password
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    // Insert user
+    const [result] = await db.query(
+      `INSERT INTO users (full_name, username, email, password)
+       VALUES (?, ?, ?, ?)`,
+      [full_name, username, email, hashedPassword]
+    );
+
+    res.json({
+      message: 'User registered successfully',
+      userId: result.insertId
+    });
+
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: err.message });
+  }
+};
+
+// ✅ LOGIN
+exports.login = async (req, res) => {
+  try {
+    const { email, password } = req.body;
+
+    const [rows] = await db.query(
+      'SELECT * FROM users WHERE email = ?',
+      [email]
+    );
+
+    if (rows.length === 0) {
+      return res.status(401).json({ message: 'User not found' });
+    }
+
+    const user = rows[0];
+
+    // Compare password
+    const isMatch = await bcrypt.compare(password, user.password);
+
+    if (!isMatch) {
+      return res.status(401).json({ message: 'Invalid password' });
+    }
+
+    // Create token
+    const token = jwt.sign(
+      { id: user.id, email: user.email },
+      JWT_SECRET,
+      { expiresIn: '7d' }
+    );
+
+    res.json({
+      message: 'Login successful',
+      token,
+      user: {
+        id: user.id,
+        full_name: user.full_name,
+        email: user.email
+      }
+    });
+
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: err.message });
+  }
+};
+
+bricksController.js
+const pool = require('../db');
+
+async function createBrick(req, res) {
+  const { user_id, name_on_brick, business_name, message, brick_position } = req.body;
+  try {
+    const [result] = await pool.query(
+      `INSERT INTO bricks (user_id, name_on_brick, business_name, message, brick_position) VALUES (?, ?, ?, ?, ?)`,
+      [user_id, name_on_brick, business_name, message, JSON.stringify(brick_position || {})]
+    );
+    res.status(201).json({ brickId: result.insertId });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Failed to create brick' });
+  }
+}
+
+async function getBricksByUser(req, res) {
+  const user_id = req.params.user_id;
+  try {
+    const [rows] = await pool.query(`SELECT * FROM bricks WHERE user_id = ?`, [user_id]);
+    res.json(rows);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Failed to fetch bricks' });
+  }
+}
+
+async function updateBrick(req, res) {
+  const { id } = req.params;
+  const updates = req.body;
+  if (updates.brick_position) updates.brick_position = JSON.stringify(updates.brick_position);
+
+  const fields = Object.keys(updates).map(k => `${k} = ?`).join(', ');
+  const values = Object.values(updates);
+
+  try {
+    await pool.query(`UPDATE bricks SET ${fields}, updated_at = CURRENT_TIMESTAMP WHERE id = ?`, [...values, id]);
+    res.json({ success: true });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Failed to update brick' });
+  }
+}
+
+async function listBricks(req, res) {
+  try {
+    const [rows] = await pool.query(`SELECT * FROM bricks ORDER BY created_at DESC`);
+    res.json(rows);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Failed to fetch bricks' });
+  }
+}
+
+module.exports = { createBrick, getBricksByUser, updateBrick, listBricks };
+
+businessProfilesController.js
+const pool = require('../db');
+
+async function createBusiness(req, res) {
+  const {
+    user_id, business_name, business_website, social_links,
+    monthly_revenue, business_type, primary_model, products_services,
+    lead_sources, sales_issues, sales_process_status, fulfillment_challenges,
+    tools_used, authority_level, active_authority_building
+  } = req.body;
+
+  try {
+    const [result] = await pool.query(
+      `INSERT INTO business_profiles
+      (user_id, business_name, business_website, social_links, monthly_revenue, business_type, primary_model, products_services,
+      lead_sources, sales_issues, sales_process_status, fulfillment_challenges, tools_used, authority_level, active_authority_building)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+      [
+        user_id, business_name, business_website, JSON.stringify(social_links || {}),
+        monthly_revenue, business_type, primary_model, JSON.stringify(products_services || []),
+        JSON.stringify(lead_sources || []), JSON.stringify(sales_issues || []),
+        sales_process_status, JSON.stringify(fulfillment_challenges || []), JSON.stringify(tools_used || []),
+        authority_level, active_authority_building || false
+      ]
+    );
+    res.status(201).json({ businessId: result.insertId });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Failed to create business profile' });
+  }
+}
+
+async function getBusiness(req, res) {
+  const user_id = req.params.user_id;
+  try {
+    const [rows] = await pool.query(`SELECT * FROM business_profiles WHERE user_id = ?`, [user_id]);
+    if (!rows.length) return res.status(404).json({ error: 'Business profile not found' });
+    res.json(rows[0]);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Failed to fetch business profile' });
+  }
+}
+
+async function updateBusiness(req, res) {
+  const user_id = req.params.user_id;
+  const updates = req.body;
+
+  // Convert arrays/objects to JSON
+  ['social_links', 'products_services', 'lead_sources', 'sales_issues', 'fulfillment_challenges', 'tools_used'].forEach(field => {
+    if (updates[field]) updates[field] = JSON.stringify(updates[field]);
+  });
+
+  const fields = Object.keys(updates).map(k => `${k} = ?`).join(', ');
+  const values = Object.values(updates);
+
+  try {
+    await pool.query(`UPDATE business_profiles SET ${fields}, updated_at = CURRENT_TIMESTAMP WHERE user_id = ?`, [...values, user_id]);
+    res.json({ success: true });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Failed to update business profile' });
+  }
+}
+
+async function listBusinesses(req, res) {
+  try {
+    const [rows] = await pool.query(`SELECT * FROM business_profiles ORDER BY created_at DESC`);
+    res.json(rows);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Failed to fetch business profiles' });
+  }
+}
+
+module.exports = { createBusiness, getBusiness, updateBusiness, listBusinesses };
+
+companiesController.js
+const pool = require('../db');
+
+async function createCompany(req, res) {
+  const { name, logo_url, owner_id } = req.body;
+  try {
+    const [result] = await pool.query(
+      `INSERT INTO companies (name, logo_url, owner_id) VALUES (?, ?, ?)`,
+      [name, logo_url, owner_id]
+    );
+    res.status(201).json({ companyId: result.insertId });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Failed to create company' });
+  }
+}
+
+async function getCompany(req, res) {
+  const id = req.params.id;
+  try {
+    const [rows] = await pool.query(`SELECT * FROM companies WHERE id = ?`, [id]);
+    if (!rows.length) return res.status(404).json({ error: 'Company not found' });
+    res.json(rows[0]);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Failed to fetch company' });
+  }
+}
+
+async function updateCompany(req, res) {
+  const id = req.params.id;
+  const updates = req.body;
+  const fields = Object.keys(updates).map(k => `${k} = ?`).join(', ');
+  const values = Object.values(updates);
+  try {
+    await pool.query(`UPDATE companies SET ${fields}, updated_at = CURRENT_TIMESTAMP WHERE id = ?`, [...values, id]);
+    res.json({ success: true });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Failed to update company' });
+  }
+}
+
+async function listCompanies(req, res) {
+  try {
+    const [rows] = await pool.query(`SELECT * FROM companies ORDER BY created_at DESC`);
+    res.json(rows);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Failed to fetch companies' });
+  }
+}
+
+module.exports = { createCompany, getCompany, updateCompany, listCompanies };
+
+companyMembersController.js
+const pool = require('../db');
+
+async function addMember(req, res) {
+  const { company_id, user_id, role } = req.body;
+  try {
+    const [result] = await pool.query(
+      `INSERT INTO company_members (company_id, user_id, role) VALUES (?, ?, ?)`,
+      [company_id, user_id, role || 'member']
+    );
+    res.status(201).json({ memberId: result.insertId });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Failed to add member' });
+  }
+}
+
+async function getMember(req, res) {
+  const id = req.params.id;
+  try {
+    const [rows] = await pool.query(`SELECT * FROM company_members WHERE id = ?`, [id]);
+    if (!rows.length) return res.status(404).json({ error: 'Member not found' });
+    res.json(rows[0]);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Failed to fetch member' });
+  }
+}
+
+async function updateMember(req, res) {
+  const id = req.params.id;
+  const updates = req.body;
+  const fields = Object.keys(updates).map(k => `${k} = ?`).join(', ');
+  const values = Object.values(updates);
+  try {
+    await pool.query(`UPDATE company_members SET ${fields} WHERE id = ?`, [...values, id]);
+    res.json({ success: true });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Failed to update member' });
+  }
+}
+
+async function listMembers(req, res) {
+  try {
+    const [rows] = await pool.query(`SELECT * FROM company_members ORDER BY joined_at DESC`);
+    res.json(rows);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Failed to fetch members' });
+  }
+}
+
+module.exports = { addMember, getMember, updateMember, listMembers };
+
+coursesController.js
+const pool = require('../db');
+
+async function createCourse(req, res) {
+  const { name, description, video_link, recommended_for, universal } = req.body;
+  try {
+    const [result] = await pool.query(
+      `INSERT INTO courses (name, description, video_link, recommended_for, universal)
+       VALUES (?, ?, ?, ?, ?)`,
+      [name, description, video_link, JSON.stringify(recommended_for || []), universal || false]
+    );
+    res.status(201).json({ courseId: result.insertId });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Failed to create course' });
+  }
+}
+
+async function getCourse(req, res) {
+  const id = req.params.id;
+  try {
+    const [rows] = await pool.query(`SELECT * FROM courses WHERE id = ?`, [id]);
+    if (!rows.length) return res.status(404).json({ error: 'Course not found' });
+    res.json(rows[0]);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Failed to fetch course' });
+  }
+}
+
+async function updateCourse(req, res) {
+  const id = req.params.id;
+  const updates = req.body;
+  if (updates.recommended_for) updates.recommended_for = JSON.stringify(updates.recommended_for);
+
+  const fields = Object.keys(updates).map(k => `${k} = ?`).join(', ');
+  const values = Object.values(updates);
+
+  try {
+    await pool.query(`UPDATE courses SET ${fields}, updated_at = CURRENT_TIMESTAMP WHERE id = ?`, [...values, id]);
+    res.json({ success: true });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Failed to update course' });
+  }
+}
+
+async function listCourses(req, res) {
+  try {
+    const [rows] = await pool.query(`SELECT * FROM courses ORDER BY created_at DESC`);
+    res.json(rows);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Failed to fetch courses' });
+  }
+}
+
+module.exports = { createCourse, getCourse, updateCourse, listCourses };
+
+onboardingStepsController.js
+const pool = require('../db');
+
+async function createStep(req, res) {
+  const { user_id, step_number, completed, data_json } = req.body;
+  try {
+    const [result] = await pool.query(
+      `INSERT INTO onboarding_steps (user_id, step_number, completed, data_json) VALUES (?, ?, ?, ?)`,
+      [user_id, step_number, completed || false, JSON.stringify(data_json || {})]
+    );
+    res.status(201).json({ stepId: result.insertId });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Failed to create onboarding step' });
+  }
+}
+
+async function getSteps(req, res) {
+  const user_id = req.params.user_id;
+  try {
+    const [rows] = await pool.query(`SELECT * FROM onboarding_steps WHERE user_id = ? ORDER BY step_number`, [user_id]);
+    res.json(rows);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Failed to fetch onboarding steps' });
+  }
+}
+
+async function updateStep(req, res) {
+  const { user_id, step_number } = req.params;
+  const updates = req.body;
+  if (updates.data_json) updates.data_json = JSON.stringify(updates.data_json);
+
+  const fields = Object.keys(updates).map(k => `${k} = ?`).join(', ');
+  const values = Object.values(updates);
+
+  try {
+    await pool.query(
+      `UPDATE onboarding_steps SET ${fields}, completed_at = CURRENT_TIMESTAMP WHERE user_id = ? AND step_number = ?`,
+      [...values, user_id, step_number]
+    );
+    res.json({ success: true });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Failed to update onboarding step' });
+  }
+}
+
+async function listSteps(req, res) {
+  try {
+    const [rows] = await pool.query(`SELECT * FROM onboarding_steps ORDER BY user_id, step_number`);
+    res.json(rows);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Failed to fetch onboarding steps' });
+  }
+}
+
+module.exports = { createStep, getSteps, updateStep, listSteps };
+
+personalProfilesController.js
+const pool = require('../db');
+
+async function createProfile(req, res) {
+  const {
+    user_id, bio, email_visibility, phone_visibility,
+    city, country, skills, ads, seo, content_creation, other_skills
+  } = req.body;
+
+  try {
+    const [result] = await pool.query(
+      `INSERT INTO personal_profiles 
+      (user_id, bio, email_visibility, phone_visibility, city, country, skills, ads, seo, content_creation, other_skills)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+      [
+        user_id, bio, email_visibility || 'private', phone_visibility || 'private',
+        city, country, JSON.stringify(skills || []),
+        ads || false, seo || false, content_creation || false, JSON.stringify(other_skills || [])
+      ]
+    );
+    res.status(201).json({ profileId: result.insertId });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Failed to create profile' });
+  }
+}
+
+async function getProfile(req, res) {
+  const user_id = req.params.user_id;
+  try {
+    const [rows] = await pool.query(`SELECT * FROM personal_profiles WHERE user_id = ?`, [user_id]);
+    if (!rows.length) return res.status(404).json({ error: 'Profile not found' });
+    res.json(rows[0]);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Failed to fetch profile' });
+  }
+}
+
+async function updateProfile(req, res) {
+  const user_id = req.params.user_id;
+  const updates = req.body;
+
+  // Convert arrays to JSON if needed
+  if (updates.skills) updates.skills = JSON.stringify(updates.skills);
+  if (updates.other_skills) updates.other_skills = JSON.stringify(updates.other_skills);
+
+  const fields = Object.keys(updates).map(k => `${k} = ?`).join(', ');
+  const values = Object.values(updates);
+
+  try {
+    await pool.query(`UPDATE personal_profiles SET ${fields}, updated_at = CURRENT_TIMESTAMP WHERE user_id = ?`, [...values, user_id]);
+    res.json({ success: true });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Failed to update profile' });
+  }
+}
+
+async function listProfiles(req, res) {
+  try {
+    const [rows] = await pool.query(`SELECT * FROM personal_profiles ORDER BY created_at DESC`);
+    res.json(rows);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Failed to fetch profiles' });
+  }
+}
+
+module.exports = { createProfile, getProfile, updateProfile, listProfiles };
+
+timeCapsulesController.js
+const pool = require('../db');
+
+async function createCapsule(req, res) {
+  const { user_id, message, lock_until } = req.body;
+  try {
+    const [result] = await pool.query(
+      `INSERT INTO time_capsules (user_id, message, lock_until) VALUES (?, ?, ?)`,
+      [user_id, message, lock_until]
+    );
+    res.status(201).json({ capsuleId: result.insertId });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Failed to create time capsule' });
+  }
+}
+
+async function getCapsulesByUser(req, res) {
+  const user_id = req.params.user_id;
+  try {
+    const [rows] = await pool.query(`SELECT * FROM time_capsules WHERE user_id = ? ORDER BY created_at DESC`, [user_id]);
+    res.json(rows);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Failed to fetch time capsules' });
+  }
+}
+
+async function listCapsules(req, res) {
+  try {
+    const [rows] = await pool.query(`SELECT * FROM time_capsules ORDER BY created_at DESC`);
+    res.json(rows);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Failed to fetch time capsules' });
+  }
+}
+
+module.exports = { createCapsule, getCapsulesByUser, listCapsules };
+
+userCourseAssignmentsController.js
+const pool = require('../db');
+
+async function assignCourse(req, res) {
+  const { user_id, course_id, status, progress } = req.body;
+  try {
+    const [result] = await pool.query(
+      `INSERT INTO user_course_assignments (user_id, course_id, status, progress) VALUES (?, ?, ?, ?)`,
+      [user_id, course_id, status || 'locked', progress || 0]
+    );
+    res.status(201).json({ assignmentId: result.insertId });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Failed to assign course' });
+  }
+}
+
+async function getUserCourses(req, res) {
+  const user_id = req.params.user_id;
+  try {
+    const [rows] = await pool.query(`SELECT * FROM user_course_assignments WHERE user_id = ?`, [user_id]);
+    res.json(rows);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Failed to fetch user courses' });
+  }
+}
+
+async function updateUserCourse(req, res) {
+  const { user_id, course_id } = req.params;
+  const updates = req.body;
+
+  const fields = Object.keys(updates).map(k => `${k} = ?`).join(', ');
+  const values = Object.values(updates);
+
+  try {
+    await pool.query(`UPDATE user_course_assignments SET ${fields}, completed_at = CURRENT_TIMESTAMP WHERE user_id = ? AND course_id = ?`, [...values, user_id, course_id]);
+    res.json({ success: true });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Failed to update user course' });
+  }
+}
+
+async function listAssignments(req, res) {
+  try {
+    const [rows] = await pool.query(`SELECT * FROM user_course_assignments ORDER BY assigned_at DESC`);
+    res.json(rows);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Failed to fetch assignments' });
+  }
+}
+
+module.exports = { assignCourse, getUserCourses, updateUserCourse, listAssignments };
+
+userController.js
+const pool = require('../db');
+const bcrypt = require('bcrypt');
+
+
+// ✅ CREATE USER (WITH PASSWORD SUPPORT)
+async function createUser(req, res) {
+  const {
+    full_name,
+    username,
+    email,
+    phone,
+    timezone,
+    discovery_source,
+    referral_code,
+    referred_by,
+    password
+  } = req.body;
+
+  try {
+    // 🔐 Hash password if provided
+    let hashedPassword = null;
+    if (password) {
+      hashedPassword = await bcrypt.hash(password, 10);
+    }
+
+    const [result] = await pool.query(
+      `INSERT INTO users 
+      (full_name, username, email, phone, timezone, discovery_source, referral_code, referred_by, password) 
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+      [
+        full_name,
+        username,
+        email,
+        phone,
+        timezone,
+        discovery_source,
+        referral_code,
+        referred_by,
+        hashedPassword
+      ]
+    );
+
+    res.status(201).json({
+      message: 'User created successfully',
+      userId: result.insertId
+    });
+
+  } catch (err) {
+    console.error(err);
+
+    if (err.code === 'ER_DUP_ENTRY') {
+      return res.status(400).json({ error: 'Email or username already exists' });
+    }
+
+    res.status(500).json({ error: 'Failed to create user' });
+  }
+}
+
+
+// ✅ GET SINGLE USER (NO PASSWORD)
+async function getUser(req, res) {
+  const id = req.params.id;
+
+  try {
+    const [rows] = await pool.query(
+      `SELECT 
+        id, full_name, username, email, phone, timezone, discovery_source,
+        referral_code, referred_by, avatar_json, joined_date,
+        current_step, status, created_at, updated_at
+      FROM users WHERE id = ?`,
+      [id]
+    );
+
+    if (!rows.length) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+
+    res.json(rows[0]);
+
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Failed to fetch user' });
+  }
+}
+
+
+// ✅ UPDATE USER (SAFE + PASSWORD SUPPORT)
+async function updateUser(req, res) {
+  const id = req.params.id;
+  const updates = { ...req.body };
+
+  try {
+    // 🔐 If password is being updated → hash it
+    if (updates.password) {
+      updates.password = await bcrypt.hash(updates.password, 10);
+    }
+
+    // ❌ Prevent updating restricted fields (optional safety)
+    delete updates.id;
+    delete updates.created_at;
+
+    const fields = Object.keys(updates).map(key => `${key} = ?`).join(', ');
+    const values = Object.values(updates);
+
+    if (!fields) {
+      return res.status(400).json({ error: 'No fields to update' });
+    }
+
+    await pool.query(
+      `UPDATE users 
+       SET ${fields}, updated_at = CURRENT_TIMESTAMP 
+       WHERE id = ?`,
+      [...values, id]
+    );
+
+    res.json({ success: true });
+
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Failed to update user' });
+  }
+}
+
+
+// ✅ LIST ALL USERS (NO PASSWORD)
+async function listUsers(req, res) {
+  try {
+    const [rows] = await pool.query(
+      `SELECT 
+        id, full_name, username, email, phone, timezone,
+        discovery_source, joined_date, status, created_at
+       FROM users
+       ORDER BY created_at DESC`
+    );
+
+    res.json(rows);
+
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Failed to fetch users' });
+  }
+}
+
+
+// ✅ DELETE USER (OPTIONAL BUT GOOD)
+async function deleteUser(req, res) {
+  const id = req.params.id;
+
+  try {
+    await pool.query(`DELETE FROM users WHERE id = ?`, [id]);
+    res.json({ success: true });
+
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Failed to delete user' });
+  }
+}
+
+
+// ✅ EXPORT ALL
+module.exports = {
+  createUser,
+  getUser,
+  updateUser,
+  listUsers,
+  deleteUser
+};

@@ -47,8 +47,15 @@ namespace UnityStandardAssets.CrossPlatformInput
         {
             if (mapping.type == AxisMapping.MappingType.NamedAxis)
             {
-                m_SteerAxis = new CrossPlatformInputManager.VirtualAxis(mapping.axisName);
-                CrossPlatformInputManager.RegisterVirtualAxis(m_SteerAxis);
+                if (CrossPlatformInputManager.AxisExists(mapping.axisName))
+                {
+                    m_SteerAxis = CrossPlatformInputManager.VirtualAxisReference(mapping.axisName);
+                }
+                else
+                {
+                    m_SteerAxis = new CrossPlatformInputManager.VirtualAxis(mapping.axisName);
+                    CrossPlatformInputManager.RegisterVirtualAxis(m_SteerAxis);
+                }
             }
         }
 
@@ -92,7 +99,6 @@ namespace UnityStandardAssets.CrossPlatformInput
 
         private void OnDisable()
         {
-            m_SteerAxis.Remove();
         }
     }
 }

@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using Invector.vCharacterController;
 using UnityStandardAssets.CrossPlatformInput;
 
@@ -60,6 +60,13 @@ public class KeyboardDirectInput : MonoBehaviour
     private void Update()
     {
         if (!cc || !gameObject.activeInHierarchy) return;
+
+        // Respect Invector's lock input state
+        if (tpInput != null && tpInput.lockInput)
+        {
+            cc.input = Vector3.zero;
+            return;
+        }
 
         Vector3 input = Vector3.zero;
 

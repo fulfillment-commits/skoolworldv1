@@ -1884,6 +1884,8 @@ namespace Invector.vCharacterController
         }
         public virtual void SetFullCapsuleHeight()
         {
+            if (_capsuleCollider == null) _capsuleCollider = GetComponent<CapsuleCollider>();
+            if (_capsuleCollider == null) return;
             _capsuleCollider.height = capsuleHeight;
             _capsuleCollider.center = capsuleOffset * capsuleHeight;
             _capsuleCollider.radius = capsuleThickness / 2f;

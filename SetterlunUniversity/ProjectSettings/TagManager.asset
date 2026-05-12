@@ -31,6 +31,9 @@ TagManager:
   - Interactable
   - AIAction
   - Authenticate
+  - EnterLobby
+  - ExitLobby
+  - Teleport
   layers:
   - Default
   - TransparentFX

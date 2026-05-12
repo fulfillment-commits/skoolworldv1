@@ -13,7 +13,7 @@ PlayerSettings:
   useOnDemandResources: 0
   accelerometerFrequency: 60
   companyName: DefaultCompany
-  productName: Setterlun_University_Test6a
+  productName: Setterlun_University_OnBoarding
   defaultCursor: {fileID: 0}
   cursorHotspot: {x: 0, y: 0}
   m_SplashScreenBackgroundColor: {r: 0.13725491, g: 0.12156863, b: 0.1254902, a: 1}
@@ -728,7 +728,7 @@ PlayerSettings:
   webGLDebugSymbols: 0
   webGLEmscriptenArgs: 
   webGLModulesDirectory: 
-  webGLTemplate: APPLICATION:Default
+  webGLTemplate: PROJECT:FirebaseTemplate
   webGLAnalyzeBuildSize: 0
   webGLUseEmbeddedResources: 0
   webGLCompressionFormat: 1
@@ -744,14 +744,23 @@ PlayerSettings:
   webGLMemoryGeometricGrowthCap: 96
   webGLPowerPreference: 2
   scriptingDefineSymbols:
-    Android: CF2_INSTALLED;CF_FORCE_MOBILE_MODE;CROSS_PLATFORM_INPUT;MOBILE_INPUT
-    PS4: CF2_INSTALLED
-    Standalone: CF2_INSTALLED;CROSS_PLATFORM_INPUT
-    WebGL: INVECTOR_BASIC;INVECTOR_MELEE;INVECTOR_SHOOTER;CROSS_PLATFORM_INPUT;MOBILE_INPUT
-    Windows Store Apps: CF2_INSTALLED;CF_FORCE_MOBILE_MODE;MOBILE_INPUT
-    XboxOne: CF2_INSTALLED
-    iPhone: CF2_INSTALLED;CF_FORCE_MOBILE_MODE;CROSS_PLATFORM_INPUT;MOBILE_INPUT
-    tvOS: CF2_INSTALLED
+    Android: CF2_INSTALLED;CF_FORCE_MOBILE_MODE;CROSS_PLATFORM_INPUT;MOBILE_INPUT;DOTWEEN
+    EmbeddedLinux: DOTWEEN
+    GameCoreScarlett: DOTWEEN
+    GameCoreXboxOne: DOTWEEN
+    LinuxHeadlessSimulation: DOTWEEN
+    Nintendo Switch: DOTWEEN
+    PS4: CF2_INSTALLED;DOTWEEN
+    PS5: DOTWEEN
+    QNX: DOTWEEN
+    Stadia: DOTWEEN
+    Standalone: CF2_INSTALLED;CROSS_PLATFORM_INPUT;DOTWEEN
+    VisionOS: DOTWEEN
+    WebGL: INVECTOR_BASIC;INVECTOR_MELEE;INVECTOR_SHOOTER;CROSS_PLATFORM_INPUT;MOBILE_INPUT;DOTWEEN
+    Windows Store Apps: CF2_INSTALLED;CF_FORCE_MOBILE_MODE;MOBILE_INPUT;DOTWEEN
+    XboxOne: CF2_INSTALLED;DOTWEEN
+    iPhone: CF2_INSTALLED;CF_FORCE_MOBILE_MODE;CROSS_PLATFORM_INPUT;MOBILE_INPUT;DOTWEEN
+    tvOS: CF2_INSTALLED;DOTWEEN
   additionalCompilerArguments: {}
   platformArchitecture: {}
   scriptingBackend: {}
