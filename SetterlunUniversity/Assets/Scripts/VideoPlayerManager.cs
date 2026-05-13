@@ -62,6 +62,7 @@ public class VideoPlayerManager : MonoBehaviour
         PlayVideo();
     }
 
+    
     private void PlayVideoURL(string fileName)
     {
         if (string.IsNullOrEmpty(fileName))
@@ -70,13 +71,13 @@ public class VideoPlayerManager : MonoBehaviour
             return;
         }
 
-        string url = "";
+        string url = "https://www.loom.com/share/47114ba398a64811a9ca2b786e7a512f";
 
-#if UNITY_WEBGL && !UNITY_EDITOR
-        url = Application.streamingAssetsPath + "/" + fileName; // WebGL requires HTTP path
-#else
-        url = "file://" + Application.streamingAssetsPath + "/" + fileName; // Editor/PC
-#endif
+// #if UNITY_WEBGL && !UNITY_EDITOR
+//         url = Application.streamingAssetsPath + "/" + fileName; // WebGL requires HTTP path
+// #else
+//         url = "file://" + Application.streamingAssetsPath + "/" + fileName; // Editor/PC
+// #endif
 
         videoPlayer.source = VideoSource.Url;
         videoPlayer.url = url;
