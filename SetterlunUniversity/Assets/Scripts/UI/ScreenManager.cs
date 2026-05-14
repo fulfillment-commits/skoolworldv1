@@ -12,6 +12,7 @@ public class ScreenManager : MonoBehaviour
 
     private Dictionary<ScreenType, ScreenBase> screenDictionary = new Dictionary<ScreenType, ScreenBase>();
     private ScreenType currentScreen = ScreenType.None;
+    private ScreenType previousScreen = ScreenType.None;
 
     public event Action<ScreenType> OnScreenChanged;
 
@@ -62,6 +63,9 @@ public class ScreenManager : MonoBehaviour
             current.Hide();
         }
 
+        if((screenType==ScreenType.Course_BusinessModel || screenType==ScreenType.Course_BusinessPortal) && currentScreen != ScreenType.Course_BusinessModel && currentScreen != ScreenType.Course_BusinessPortal)
+            previousScreen = currentScreen;
+
         // Show new
         if (screenDictionary.TryGetValue(screenType, out ScreenBase nextScreen))
         {
@@ -86,6 +90,15 @@ public class ScreenManager : MonoBehaviour
             currentScreen = ScreenType.None;
             UpdatePlayerInputState();
         }
+    }
+
+    /// <summary>Hide the current screen and restore the one shown before it.</summary>
+    public void GoBack()
+    {
+        if (previousScreen != ScreenType.None)
+            ShowScreen(previousScreen);
+        else
+            HideCurrentScreen();
     }
 
     // ====================== HELPER METHODS ======================

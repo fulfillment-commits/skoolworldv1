@@ -26,5 +26,9 @@ public enum ScreenType
     Quest_Goals,
     Quest_SelfAwareness,
     
-    Lobby
+    Lobby,
+
+    // Course panels
+    Course_BusinessModel,
+    Course_BusinessPortal
 }

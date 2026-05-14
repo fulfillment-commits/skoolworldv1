@@ -1,0 +1,56 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 152706765a7dec6419e3ec12554375ac, type: 3}
+  m_Name: BusinessPortalCourse
+  m_EditorClassIdentifier:
+  courseName: Business Portal Course
+  courseDescription: Tools and frameworks to validate, build, and launch your business faster.
+  accentColor: {r: 0.13, g: 0.55, b: 0.88, a: 1}
+  lessons:
+  - title: What to Consider for your Biz Model & Niche
+    description: Learn what to consider when selecting your business model and niche
+      so you can get to market faster and start testing without getting stuck in analysis
+      paralysis. This chapter covers passion versus purchasing power, why you should
+      niche down first, why boring niches can be reliable, why customer lifetime value
+      matters, and why competition is a sign of market demand.
+    videoUrl: https://www.loom.com/embed/35fa2e8a707646808db0d81e9bc5e9f1
+    thumbnail: {fileID: 0}
+  - title: Create Your Business Summary
+    description: Create a clear business summary based on whether you already have
+      an offer or still need help building one. If you already have an offer, use
+      the V2 Biz Summary Generator. If you do not have an offer yet, use the Business
+      Model and Offer Generator. The summary will appear below the questions and will
+      not be sent to your email.
+    videoUrl: https://www.loom.com/embed/90849a72965841eab0986ab046cf6ea8
+    thumbnail: {fileID: 0}
+  - title: Generate Your Knowledgebase
+    description: Use the Knowledgebase AI Agent to turn your business summary into
+      a structured knowledgebase. Make sure you are using the most up-to-date version
+      of chat before generating it. This step helps organize your business model,
+      offer, niche, positioning, and customer information.
+    videoUrl: https://www.loom.com/embed/25a0a535208a46d0b7dea9732d2d34d5
+    thumbnail: {fileID: 0}
+  - title: Output Your DFY Business Blueprint
+    description: Build a realistic Done-For-You business blueprint for the opportunity
+      you described. The blueprint should include your ideal customer profile, market
+      size, core pains, desired outcomes, single DFY offer, customer avatars, pricing
+      model, competitor snapshot, MVP launch path, and scale-readiness checklist.
+      The goal is to create something practical, monetizable, and ready to execute.
+    videoUrl: https://www.loom.com/embed/caf581770e48436d960a8fd3be9c31a7
+    thumbnail: {fileID: 0}
+  - title: Market Audit
+    description: Check whether your market is hungry, proven, and already spending
+      money. Make sure you are selling to one clear niche, buyers already search for
+      solutions, the pain is urgent or expensive, and competitors are already making
+      money. If the market is not starving, no offer can fix it.
+    videoUrl: https://www.loom.com/embed/de2ac2ae80a443418c0d31eef8baf155
+    thumbnail: {fileID: 0}
