@@ -15,6 +15,9 @@ public abstract class QuestScreenBase : ScreenBase
 
     [Header("Quest Trigger Reference (optional)")]
     [SerializeField] protected QuestTrigger linkedQuestTrigger;
+    
+    [Header("Force Next Screen")]
+    [SerializeField] protected ScreenType nextScreen =ScreenType.None;
 
     protected virtual void Start()
     {
@@ -23,15 +26,32 @@ public abstract class QuestScreenBase : ScreenBase
         if (exitButton != null) exitButton.onClick.AddListener(OnExitClicked);
     }
 
+    
+
     protected abstract void OnSubmitClicked();
+
+    protected virtual void CheckNextScreenAndExit()
+    {
+        if (nextScreen != ScreenType.None)
+        {
+            if (ScreenManager.Instance != null)
+                ScreenManager.Instance.ShowScreen(nextScreen);
+        }
+        else
+        {
+            OnExitClicked();
+        }
+    }
 
     protected virtual void OnExitClicked()
     {
-        if (linkedQuestTrigger != null)
-        {
-            linkedQuestTrigger.ForceReTrigger();
-        }
-        ScreenManager.Instance.ShowScreen(ScreenType.MainWorld);
+        
+            if (linkedQuestTrigger != null)
+            {
+                linkedQuestTrigger.ForceReTrigger();
+            }
+
+            ScreenManager.Instance.ShowScreen(ScreenType.MainWorld);
     }
 
     protected void CompleteQuest(string dataJson = null)

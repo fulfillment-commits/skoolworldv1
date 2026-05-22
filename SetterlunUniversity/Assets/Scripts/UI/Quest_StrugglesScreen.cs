@@ -138,7 +138,7 @@ public class Quest_StrugglesScreen : QuestScreenBase
             if (success)
             {
                 Debug.Log("✅ Struggles data saved successfully!");
-                OnExitClicked();
+                CheckNextScreenAndExit();
             }
             else
             {

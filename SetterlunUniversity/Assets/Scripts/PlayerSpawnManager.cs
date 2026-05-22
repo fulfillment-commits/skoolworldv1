@@ -105,15 +105,24 @@ public class PlayerSpawnManager : MonoBehaviour
         int attempts = 0;
         while (player == null && attempts < 60)
         {
-            // 1. Try finding Invector Controller FIRST (most reliable for real player)
-            var controller = Resources.FindObjectsOfTypeAll<vThirdPersonController>()
-                .FirstOrDefault(c => !c.name.Contains("Preview") && !c.name.Contains("UI"));
-            
-            if (controller != null) 
+            var rfManager = FindObjectOfType<ReferencesManager>();
+            if (rfManager != null)
             {
-                player = controller.gameObject;
+                player = rfManager.player;
             }
-            
+            else
+            {
+
+                // 1. Try finding Invector Controller FIRST (most reliable for real player)
+                var controller = Resources.FindObjectsOfTypeAll<vThirdPersonController>()
+                    .FirstOrDefault(c => !c.name.Contains("Preview") && !c.name.Contains("UI"));
+
+                if (controller != null)
+                {
+                    player = controller.gameObject;
+                }
+            }
+
             // 2. Try Tag SECOND
             if (player == null)
             {
@@ -144,6 +153,7 @@ public class PlayerSpawnManager : MonoBehaviour
         // Find the spawn point object
         GameObject point = null;
         
+        Debug.Log($"Player Found {player.name} Spawn Point: {pointName}");
         // Use a very aggressive search for the point
         var allObjects = Resources.FindObjectsOfTypeAll<GameObject>();
         point = allObjects.FirstOrDefault(go => go.name == pointName && (go.scene == SceneManager.GetActiveScene() || !go.scene.IsValid()));

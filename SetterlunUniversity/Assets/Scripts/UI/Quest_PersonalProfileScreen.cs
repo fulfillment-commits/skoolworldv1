@@ -30,10 +30,6 @@ public class Quest_PersonalProfileScreen : QuestScreenBase
     [SerializeField] private Transform skillsContainer;
     [SerializeField] private GameObject skillChipPrefab;
     private List<string> selectedSkills = new List<string>();
-
-    [Header("Step 4: Experience")]
-    [SerializeField] private TMP_Dropdown experienceDropdown;
-
     private string[] availableSkills = new string[]
     {
         "Ads", "SEO", "Organic Marketing", "Content Creation", "Copywriting",
@@ -45,6 +41,17 @@ public class Quest_PersonalProfileScreen : QuestScreenBase
         "Branding", "Business Strategy", "Finance & Operations"
     };
 
+    [Header("Step 4: Experience")]
+    [SerializeField] private Transform xpContainer;
+    [SerializeField] private GameObject xpChipPrefab;
+    private string selectedXP = null;
+    private List<QuestOptionChip> xpChips = new List<QuestOptionChip>();
+    // [SerializeField] private TMP_Dropdown experienceDropdown;
+    private string[] availableXP = new string[]
+    {
+        "Not started", "< 6 months","6–12 months","1–3 years","3+ years"
+    };
+    
     protected override void Start()
     {
         base.Start();
@@ -64,6 +71,7 @@ public class Quest_PersonalProfileScreen : QuestScreenBase
         }
 
         InitializeSkills();
+        InitializeXPDropdown();
         UpdateStepUI();
     }
 
@@ -82,7 +90,15 @@ public class Quest_PersonalProfileScreen : QuestScreenBase
         {
             GameObject chip = Instantiate(skillChipPrefab, skillsContainer);
             var text = chip.GetComponentInChildren<Text>();
-            if (text != null) text.text = skill;
+            if (text != null)
+            {
+                text.text = skill;
+            }
+            else
+            {
+                var tmp= chip.GetComponentInChildren<TextMeshProUGUI>();
+                if (tmp != null) tmp.text = skill;
+            }
 
             var toggle = chip.GetComponent<Toggle>();
             if (toggle != null)
@@ -95,7 +111,31 @@ public class Quest_PersonalProfileScreen : QuestScreenBase
             }
         }
     }
+ private void InitializeXPDropdown()
+    {
+        if (xpContainer == null || xpChipPrefab == null) return;
 
+        foreach (Transform child in xpContainer) Destroy(child.gameObject);
+        xpChips.Clear();
+
+        foreach (var product in availableXP)
+        {
+            GameObject chipObj = Instantiate(xpChipPrefab, xpContainer);
+            QuestOptionChip chip = chipObj.GetComponent<QuestOptionChip>();
+
+            if (chip != null)
+            {
+                xpChips.Add(chip);
+                chip.Setup(product, (value) => OnRevenueSelected(chip));
+            }
+        }
+    }
+    
+    private void OnRevenueSelected(QuestOptionChip selectedChip)
+    {
+        foreach (var chip in xpChips) chip.SetSelected(chip == selectedChip);
+        selectedXP = selectedChip.OptionValue;
+    }
     private void UpdateStepUI()
     {
         for (int i = 0; i < steps.Length; i++)
@@ -146,7 +186,7 @@ public class Quest_PersonalProfileScreen : QuestScreenBase
             phone = phoneInput.text,
             visibility = visibilityToggle.isOn ? "public" : "private",
             skills = selectedSkills.ToArray(),
-            years_in_business = experienceDropdown.options[experienceDropdown.value].text
+            years_in_business = string.IsNullOrEmpty(selectedXP) ?  "Not started":selectedXP
         };
 
         OnboardingManager.Instance.CreatePersonalProfile(profileData, (success, error) =>

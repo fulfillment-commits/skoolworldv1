@@ -184,7 +184,7 @@ public class Quest_GoalsScreen : QuestScreenBase
             if (success)
             {
                 Debug.Log("✅ Goals data saved successfully!");
-                OnExitClicked();
+                CheckNextScreenAndExit();
             }
             else
             {

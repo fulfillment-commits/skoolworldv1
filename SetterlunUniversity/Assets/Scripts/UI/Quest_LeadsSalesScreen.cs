@@ -276,7 +276,7 @@ public class Quest_LeadsSalesScreen : QuestScreenBase
             if (success)
             {
                 Debug.Log("✅ Leads & Sales data saved successfully!");
-                OnExitClicked();
+                CheckNextScreenAndExit();
             }
             else
             {

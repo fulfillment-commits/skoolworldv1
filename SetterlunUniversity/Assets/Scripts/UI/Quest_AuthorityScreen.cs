@@ -186,7 +186,7 @@ public class Quest_AuthorityScreen : QuestScreenBase
             if (success)
             {
                 Debug.Log("✅ Authority data saved successfully!");
-                OnExitClicked();
+                CheckNextScreenAndExit();
             }
             else
             {

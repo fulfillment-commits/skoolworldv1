@@ -1,3 +1,4 @@
+using Bozo.ModularCharacters;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
@@ -5,8 +6,8 @@ using TMPro;
 public class AvatarScreen : ScreenBase
 {
     [Header("Avatar Configuration")]
-    [SerializeField] private Sprite[] avatarSprites;
-    [SerializeField] private Image selectedAvatarImage;
+    [SerializeField] private CharacterData avatarData;
+    [SerializeField] private OutfitSystem outFitSystem;
     [SerializeField] private TextMeshProUGUI selectedAvatarNameText;
 
     [Header("Navigation")]
@@ -46,21 +47,21 @@ public class AvatarScreen : ScreenBase
 
     private void OnLeftArrowClicked()
     {
-        if (avatarSprites == null || avatarSprites.Length == 0) return;
+        if (avatarData == null || avatarData.characterObjects.Length == 0) return;
         
         selectedAvatarIndex--;
         if (selectedAvatarIndex < 0)
-            selectedAvatarIndex = avatarSprites.Length - 1;
+            selectedAvatarIndex = avatarData.characterObjects.Length - 1;
             
         UpdateSelectedAvatarDisplay();
     }
 
     private void OnRightArrowClicked()
     {
-        if (avatarSprites == null || avatarSprites.Length == 0) return;
+        if (avatarData == null || avatarData.characterObjects.Length == 0) return;
 
         selectedAvatarIndex++;
-        if (selectedAvatarIndex >= avatarSprites.Length)
+        if (selectedAvatarIndex >= avatarData.characterObjects.Length)
             selectedAvatarIndex = 0;
 
         UpdateSelectedAvatarDisplay();
@@ -70,24 +71,25 @@ public class AvatarScreen : ScreenBase
     {
         selectedAvatarIndex = PlayerPrefs.GetInt(PLAYERPREFS_AVATAR_INDEX, 0);
         // Ensure index is within bounds if sprites array changed
-        if (avatarSprites != null && avatarSprites.Length > 0)
+        if (avatarData != null && avatarData.characterObjects.Length > 0)
         {
-            selectedAvatarIndex = Mathf.Clamp(selectedAvatarIndex, 0, avatarSprites.Length - 1);
+            selectedAvatarIndex = Mathf.Clamp(selectedAvatarIndex, 0, avatarData.characterObjects.Length - 1);
         }
     }
 
     private void UpdateSelectedAvatarDisplay()
     {
-        if (avatarSprites == null || avatarSprites.Length == 0) return;
+        if (avatarData == null || avatarData.characterObjects.Length == 0) return;
 
-        if (selectedAvatarImage != null && avatarSprites[selectedAvatarIndex] != null)
+        if (outFitSystem != null && avatarData.characterObjects[selectedAvatarIndex] != null)
         {
-            selectedAvatarImage.sprite = avatarSprites[selectedAvatarIndex];
+            outFitSystem.characterData = avatarData.characterObjects[selectedAvatarIndex];
+            outFitSystem.LoadFromObject();
         }
 
         if (selectedAvatarNameText != null)
         {
-            selectedAvatarNameText.text = $"Avatar {selectedAvatarIndex + 1}";
+            selectedAvatarNameText.text = $"{avatarData.characterObjects[selectedAvatarIndex].name}";
         }
     }
 

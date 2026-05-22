@@ -1,0 +1,171 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &6082338496952909303
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 6855356110518347597}
+  - component: {fileID: 2969836240054864917}
+  - component: {fileID: 8574218187718368764}
+  m_Layer: 0
+  m_Name: BSMC_HairBack_Flare
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &6855356110518347597
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6082338496952909303}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 6066097711957526244}
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &2969836240054864917
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6082338496952909303}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 56222aeebf4898a41b83761b0e03c752, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  customShader: 0
+  AttachInEditMode: 0
+  OutfitName: 
+  OutfitIcon: {fileID: 21300000, guid: b8961005134f28c46806de35ad300600, type: 3}
+  ColorChannels:
+  - Base
+  - Gradient
+  TextureCatagory: 
+  supportDecals: 0
+  supportPatterns: 0
+  showCharacterCreator: 1
+  Type: {fileID: 11400000, guid: 3781f2a69b931724b9a19deab41d2f45, type: 2}
+  AttachPoint: head
+  defaultColors: []
+  tags: []
+  LinkedColorSets: []
+  IncompatibleSets: []
+  currentSwatch: 0
+  outfitSwatches: []
+  originalBones: []
+  originalRootBone: {fileID: 0}
+  editorAttachPoint: {fileID: 0}
+--- !u!114 &8574218187718368764
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6082338496952909303}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1d2d34769e54eb14398b24dc32eea2c5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  type: 1
+  boneReferenceByString: 0
+  rootBones:
+  - {fileID: 9086508792998372536}
+  - {fileID: 4416939990233972889}
+  - {fileID: 8915156223330248743}
+  rootBonesString: []
+  collisionSize: 0.025
+  influenceMap: {fileID: 0}
+  reductionSetting: 0.065
+  clothPreset: {fileID: 4900000, guid: 433936ba35faf404f921f4a7966526f1, type: 3}
+  transforms: []
+--- !u!1001 &6027402655120531727
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 6855356110518347597}
+    m_Modifications:
+    - target: {fileID: -8679921383154817045, guid: d71f063d571d8e94886affff61c6fb94, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: d71f063d571d8e94886affff61c6fb94, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: d71f063d571d8e94886affff61c6fb94, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: d71f063d571d8e94886affff61c6fb94, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: d71f063d571d8e94886affff61c6fb94, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: d71f063d571d8e94886affff61c6fb94, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: d71f063d571d8e94886affff61c6fb94, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: d71f063d571d8e94886affff61c6fb94, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: d71f063d571d8e94886affff61c6fb94, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: d71f063d571d8e94886affff61c6fb94, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: d71f063d571d8e94886affff61c6fb94, type: 3}
+      propertyPath: m_Name
+      value: BSMC_Outfit_HairBack_Flare
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: d71f063d571d8e94886affff61c6fb94, type: 3}
+--- !u!4 &4416939990233972889 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 7992127109888319894, guid: d71f063d571d8e94886affff61c6fb94, type: 3}
+  m_PrefabInstance: {fileID: 6027402655120531727}
+  m_PrefabAsset: {fileID: 0}
+--- !u!4 &6066097711957526244 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: d71f063d571d8e94886affff61c6fb94, type: 3}
+  m_PrefabInstance: {fileID: 6027402655120531727}
+  m_PrefabAsset: {fileID: 0}
+--- !u!4 &8915156223330248743 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: -6332802567826650840, guid: d71f063d571d8e94886affff61c6fb94, type: 3}
+  m_PrefabInstance: {fileID: 6027402655120531727}
+  m_PrefabAsset: {fileID: 0}
+--- !u!4 &9086508792998372536 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: -5927755957070920265, guid: d71f063d571d8e94886affff61c6fb94, type: 3}
+  m_PrefabInstance: {fileID: 6027402655120531727}
+  m_PrefabAsset: {fileID: 0}

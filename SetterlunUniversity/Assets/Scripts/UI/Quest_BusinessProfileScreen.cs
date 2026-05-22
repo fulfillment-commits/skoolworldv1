@@ -16,7 +16,11 @@ public class Quest_BusinessProfileScreen : QuestScreenBase
     [SerializeField] private TMP_InputField businessWebsiteInput;
 
     [Header("Step 1: Revenue & Stage")]
-    [SerializeField] private TMP_Dropdown revenueDropdown;
+    [SerializeField] private Transform revenueContainer;
+    [SerializeField] private GameObject revenuePrefab;
+    private string selectedRevenue;
+    private List<QuestOptionChip> revenueChips = new List<QuestOptionChip>();
+    // [SerializeField] private TMP_Dropdown revenueDropdown;
     [SerializeField] private string[] revenueOptions = new string[]
     {
         "$0", "$1–$5K", "$5–$10K", "$10–$25K", "$25–$50K", "$50–$100K", "$100K+"
@@ -82,11 +86,61 @@ public class Quest_BusinessProfileScreen : QuestScreenBase
 
     private void InitializeRevenueDropdown()
     {
-        if (revenueDropdown != null)
+        if (revenueContainer == null || revenuePrefab == null) return;
+
+        foreach (Transform child in revenueContainer) Destroy(child.gameObject);
+        revenueChips.Clear();
+
+        foreach (var product in revenueOptions)
         {
-            revenueDropdown.ClearOptions();
-            revenueDropdown.AddOptions(revenueOptions.ToList());
+            GameObject chipObj = Instantiate(revenuePrefab, revenueContainer);
+            QuestOptionChip chip = chipObj.GetComponent<QuestOptionChip>();
+
+            if (chip != null)
+            {
+                revenueChips.Add(chip);
+                chip.Setup(product, (value) => OnRevenueSelected(chip));
+            }
+            else
+            {
+                // Robust Fallback if script is missing
+                var tmpText = chipObj.GetComponentInChildren<TextMeshProUGUI>();
+                if (tmpText != null) tmpText.text = product;
+                else
+                {
+                    var legacyText = chipObj.GetComponentInChildren<Text>();
+                    if (legacyText != null) legacyText.text = product;
+                }
+
+                // Hook up Button/Toggle manually for multi-selection
+                var button = chipObj.GetComponent<Button>();
+                if (button != null)
+                {
+                    button.onClick.AddListener(() => 
+                    {
+                        if (selectedProducts.Contains(product)) selectedProducts.Remove(product);
+                        else selectedProducts.Add(product);
+                    });
+                }
+                var toggle = chipObj.GetComponent<Toggle>();
+                if (toggle != null)
+                {
+                    toggle.onValueChanged.AddListener((isOn) => 
+                    {
+                        if (isOn) { if (!selectedProducts.Contains(product)) selectedProducts.Add(product); }
+                        else { selectedProducts.Remove(product); }
+                    });
+                }
+
+                Debug.LogWarning($"QuestOptionChip missing on {sellPrefab.name}. Selection hooked via fallback.");
+            }
         }
+    }
+    
+    private void OnRevenueSelected(QuestOptionChip selectedChip)
+    {
+        foreach (var chip in revenueChips) chip.SetSelected(chip == selectedChip);
+        selectedRevenue = selectedChip.OptionValue;
     }
 
     private void InitializeBusinessTypes()
@@ -239,7 +293,7 @@ public class Quest_BusinessProfileScreen : QuestScreenBase
         {
             business_name = businessNameInput != null ? businessNameInput.text : "",
             business_website = businessWebsiteInput != null ? businessWebsiteInput.text : "",
-            monthly_revenue = revenueDropdown != null ? revenueDropdown.options[revenueDropdown.value].text : "0",
+            monthly_revenue = string.IsNullOrEmpty(selectedRevenue) ?  "0":selectedRevenue,
             business_type = selectedBusinessType,
             what_you_sell = selectedProducts.ToArray()
         };
@@ -260,7 +314,7 @@ public class Quest_BusinessProfileScreen : QuestScreenBase
             if (success)
             {
                 Debug.Log("✅ Business profile saved successfully!");
-                OnExitClicked();
+                CheckNextScreenAndExit();
             }
             else
             {

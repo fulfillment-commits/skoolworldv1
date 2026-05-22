@@ -221,7 +221,7 @@ public class Quest_OperationsScreen : QuestScreenBase
             if (success)
             {
                 Debug.Log("✅ Operations data saved successfully!");
-                OnExitClicked();
+                CheckNextScreenAndExit();
             }
             else
             {

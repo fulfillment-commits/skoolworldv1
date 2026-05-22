@@ -131,7 +131,7 @@ public class Quest_SelfAwarenessScreen : QuestScreenBase
             if (success)
             {
                 Debug.Log("✅ Self-Awareness data saved successfully!");
-                OnExitClicked();
+                CheckNextScreenAndExit();
             }
             else
             {
