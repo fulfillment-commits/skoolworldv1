@@ -7,7 +7,7 @@ public class QuestPanelUI : MonoBehaviour
     public static QuestPanelUI Instance { get; private set; }
 
     [SerializeField] private TextMeshProUGUI progressText;
-    [SerializeField] private Slider progressBar;
+    [SerializeField] private Image progressBar;
     [SerializeField] private QuestButton[] questButtons;
 
     private void Awake()
@@ -31,7 +31,7 @@ public class QuestPanelUI : MonoBehaviour
         if (OnboardingQuestManager.Instance == null) return;
 
         float progress = OnboardingQuestManager.Instance.GetOverallProgress();
-        progressBar.value = progress;
+        progressBar.fillAmount = progress;
         progressText.text = $"{Mathf.RoundToInt(progress * 100)}% Complete";
 
         for (int i = 0; i < questButtons.Length; i++)

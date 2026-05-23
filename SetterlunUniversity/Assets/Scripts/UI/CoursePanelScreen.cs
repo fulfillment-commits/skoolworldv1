@@ -22,8 +22,8 @@ public class CoursePanelScreen : ScreenBase
     // Inspector — Header
     // ---------------------------------------------------------------
     [Header("Header UI")]
+    [SerializeField] private TMP_Text floorNameText;
     [SerializeField] private TMP_Text courseTitleText;
-    [SerializeField] private TMP_Text courseDescriptionText;
     [SerializeField] private Image headerBackground;
     [SerializeField] private Button closeButton;
 
@@ -40,15 +40,14 @@ public class CoursePanelScreen : ScreenBase
     // ---------------------------------------------------------------
     [Header("Iframe & Video Area")]
     [SerializeField] private IframeOverlayController iframeController;
-    [SerializeField] private TMP_Text currentLessonTitleText;
     [SerializeField] private TMP_Text currentLessonDescriptionText;
 
     // ---------------------------------------------------------------
     // Inspector — Progress
     // ---------------------------------------------------------------
-    [Header("Progress")]
-    [SerializeField] private Slider progressSlider;
-    [SerializeField] private TMP_Text progressText;             // e.g. "3 / 8 Completed"
+    // [Header("Progress")]
+    // [SerializeField] private Slider progressSlider;
+    // [SerializeField] private TMP_Text progressText;             // e.g. "3 / 8 Completed"
 
     [Header("Mark Complete Button")]
     [SerializeField] private Button markCompleteButton;
@@ -86,7 +85,6 @@ public class CoursePanelScreen : ScreenBase
 
         BuildList();
         RefreshHeader();
-        RefreshProgress();
         RefreshTabs();
 
         // Select first uncompleted lesson, fall back to lesson 0
@@ -172,8 +170,8 @@ public class CoursePanelScreen : ScreenBase
             _spawnedItems[_currentIndex].SetSelected(true);
 
         // Update detail labels
-        if (currentLessonTitleText != null)
-            currentLessonTitleText.text = entry.title;
+        // if (currentLessonTitleText != null)
+        //     currentLessonTitleText.text = entry.title;
         if (currentLessonDescriptionText != null)
             currentLessonDescriptionText.text = entry.description;
 
@@ -200,7 +198,6 @@ public class CoursePanelScreen : ScreenBase
             _spawnedItems[_currentIndex].SetCompleted(!current);
 
         RefreshMarkCompleteButton();
-        RefreshProgress();
 
         // Auto-advance to next uncompleted lesson
         if (!current)
@@ -221,7 +218,6 @@ public class CoursePanelScreen : ScreenBase
             _spawnedItems[_currentIndex].SetCompleted(true);
 
         RefreshMarkCompleteButton();
-        RefreshProgress();
 
         int next = FindNextUncompleted(_currentIndex);
         if (next >= 0) SelectLesson(next, openIframe: true);
@@ -258,20 +254,16 @@ public class CoursePanelScreen : ScreenBase
     private void RefreshHeader()
     {
         if (courseTitleText != null)       courseTitleText.text = courseData.courseName;
-        if (courseDescriptionText != null) courseDescriptionText.text = courseData.courseDescription;
+        // if (courseDescriptionText != null) courseDescriptionText.text = courseData.courseDescription;
         if (headerBackground != null)      headerBackground.color = courseData.accentColor;
     }
 
-    private void RefreshProgress()
-    {
-        if (courseData == null) return;
-        int total = courseData.lessons.Count;
-        int done = courseData.CompletedCount();
-        float ratio = total > 0 ? (float)done / total : 0f;
-
-        if (progressSlider != null) progressSlider.value = ratio;
-        if (progressText != null)   progressText.text = $"{done} / {total} Completed";
-    }
+//     private void RefreshProgress()
+//     {
+//         if (courseData == null) return;
+//         int total = courseData.lessons.Count;
+//         int done = courseData.CompletedCount();
+// }
 
     // ---------------------------------------------------------------
     // Scroll chapter list so selected item is centred
