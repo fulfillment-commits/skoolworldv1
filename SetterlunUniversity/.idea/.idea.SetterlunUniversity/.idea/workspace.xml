@@ -6,29 +6,17 @@
   <component name="ChangeListManager">
     <list default="true" id="f976adce-1e4f-45bd-bef2-f7c88739f689" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/.idea.SetterlunUniversity/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.SetterlunUniversity/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Prefabs/UI/CourseLessonItem.prefab" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Prefabs/UI/CourseLessonItem.prefab" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Scenes/Lobby.unity" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scenes/Lobby.unity" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Assets/Scenes/Onboarding.unity" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scenes/Onboarding.unity" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Scripts/UI/CoursePanelScreen.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/UI/CoursePanelScreen.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Scripts/UI/QuestPanelUI.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/UI/QuestPanelUI.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Setterlun_University/Environment/OuterThings.fbm/UG_Tile_01.png.meta" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Setterlun_University/Environment/OuterThings.fbm/UG_Tile_01.png.meta" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Setterlun_University/Environment/Set_Uni_Textures/TechScreensT.png" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Setterlun_University/Environment/Set_Uni_Textures/TechScreensT.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Setterlun_University/Environment/Set_Uni_Textures/TechScreensT.png.meta" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Setterlun_University/Environment/Set_Uni_Textures/TechScreensT.png.meta" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Setterlun_University/Interiors/Materials/Lift_BaseMap.mat" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Setterlun_University/Interiors/Materials/Lift_BaseMap.mat" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Setterlun_University/Interiors/Materials/Lift_BaseMap.mat.meta" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Setterlun_University/Interiors/Materials/Lift_BaseMap.mat.meta" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Setterlun_University/Interiors/Materials/LightGlow.mat" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Setterlun_University/Interiors/Materials/LightGlow.mat" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Setterlun_University/Interiors/Materials/LightGlow.mat.meta" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Setterlun_University/Interiors/Materials/LightGlow.mat.meta" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Setterlun_University/Interiors/Materials/TechScreensT.mat" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Setterlun_University/Interiors/Materials/TechScreensT.mat" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Setterlun_University/Interiors/Materials/TechScreensT.mat.meta" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Setterlun_University/Interiors/Materials/TechScreensT.mat.meta" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Setterlun_University/Interiors/Materials/m_plants_Base_color.mat" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Setterlun_University/Interiors/Materials/m_plants_Base_color.mat" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Setterlun_University/Interiors/Materials/m_plants_Base_color.mat.meta" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Setterlun_University/Interiors/Materials/m_plants_Base_color.mat.meta" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Setterlun_University/Interiors/Materials/wood_AlbedoTransparency.mat" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Setterlun_University/Interiors/Materials/wood_AlbedoTransparency.mat" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Setterlun_University/Interiors/Materials/wood_AlbedoTransparency.mat.meta" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Setterlun_University/Interiors/Materials/wood_AlbedoTransparency.mat.meta" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Setterlun_University/Interiors/SetterlunUni_Lobby.fbm/Lift_BaseMap.png.meta" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Setterlun_University/Interiors/SetterlunUni_Lobby.fbm/Lift_BaseMap.png.meta" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Setterlun_University/Interiors/SetterlunUni_Lobby.fbm/m_plants_Base_color.png.meta" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Setterlun_University/Interiors/SetterlunUni_Lobby.fbm/m_plants_Base_color.png.meta" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Setterlun_University/Interiors/SetterlunUni_Lobby.fbm/wood_AlbedoTransparency.png.meta" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Setterlun_University/Interiors/SetterlunUni_Lobby.fbm/wood_AlbedoTransparency.png.meta" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/font/nimbus-sans/NimbusSanL-Bol SDF.asset" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/font/nimbus-sans/NimbusSanL-Bol SDF.asset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Scenes/RoomLobby_01.unity" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scenes/RoomLobby_01.unity" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Scripts/UI/QuestOptionChip.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/UI/QuestOptionChip.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Scripts/UI/QuestTrigger.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/UI/QuestTrigger.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/UI/Prefabs/BusinessType (Card).prefab" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/UI/Prefabs/BusinessType (Card).prefab" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/UI/Prefabs/WhatSell (Chip).prefab" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/UI/Prefabs/WhatSell (Chip).prefab" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ProjectSettings/EditorBuildSettings.asset" beforeDir="false" afterPath="$PROJECT_DIR$/ProjectSettings/EditorBuildSettings.asset" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/UserSettings/EditorUserSettings.asset" beforeDir="false" afterPath="$PROJECT_DIR$/UserSettings/EditorUserSettings.asset" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/UserSettings/Layouts/CurrentMaximizeLayout.dwlt" beforeDir="false" afterPath="$PROJECT_DIR$/UserSettings/Layouts/CurrentMaximizeLayout.dwlt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/UserSettings/Layouts/default-2022.dwlt" beforeDir="false" afterPath="$PROJECT_DIR$/UserSettings/Layouts/default-2022.dwlt" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -131,6 +119,8 @@
       <workItem from="1778739219405" duration="18740000" />
       <workItem from="1778829173410" duration="5032000" />
       <workItem from="1779431693486" duration="9577000" />
+      <workItem from="1779598061805" duration="3332000" />
+      <workItem from="1780298525958" duration="3833000" />
     </task>
     <servers />
   </component>

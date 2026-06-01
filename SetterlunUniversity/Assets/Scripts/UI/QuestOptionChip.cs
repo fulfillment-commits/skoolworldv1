@@ -15,6 +15,7 @@ public class QuestOptionChip : MonoBehaviour
     [SerializeField] private Toggle toggle;
     
     [Header("Animation Settings")]
+    [SerializeField] private bool animated = false;
     [SerializeField] private float selectedScale = 1.1f;
     [SerializeField] private float animationDuration = 0.2f;
     [SerializeField] private GameObject selectedVisual;
@@ -81,11 +82,14 @@ public class QuestOptionChip : MonoBehaviour
         }
 
         // Scale animation
-        float targetScale = selected ? selectedScale : 1f;
-        float duration = immediate ? 0 : animationDuration;
-        
-        transform.DOKill();
-        transform.DOScale(targetScale, duration).SetEase(Ease.OutBack);
+        if (animated)
+        {
+            float targetScale = selected ? selectedScale : 1f;
+            float duration = immediate ? 0 : animationDuration;
+
+            transform.DOKill();
+            transform.DOScale(targetScale, duration).SetEase(Ease.OutBack);
+        }
 
         // Visual highlight
         if (selectedVisual != null)

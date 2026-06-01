@@ -23,12 +23,19 @@ public class QuestTrigger : MonoBehaviour
     public UnityEvent onInteractionClickAfterCompletion;
 
     private bool playerInside = false;
+    [SerializeField] private bool videoQuest = false;
 
     private void OnTriggerEnter(Collider other)
     {
         if (other.CompareTag("Player"))
         {
             playerInside = true;
+            if (videoQuest)
+            {
+                Action callback = (onInteractionClickAfterCompletion.GetPersistentEventCount() > 0) ? () => onInteractionClickAfterCompletion?.Invoke() : null;
+                QuestInteractionController.OnRequestShow?.Invoke(questNumber, questScreenType, questTitle, afterCompletionButtonText, callback);
+                return;
+            }
             InvokeTriggerEvents(true);
             UpdateInteractionUI();
         }
