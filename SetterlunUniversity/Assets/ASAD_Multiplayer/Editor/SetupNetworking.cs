@@ -166,6 +166,7 @@ namespace ASAD_Multiplyer.CustomEditor
             //Enable multiplayer compatiable components
             
             // _player.GetComponent<vRagdoll>().enabled = true;
+            _player.GetComponent<PhotonView>().enabled = true;
             _player.GetComponent<vFootStep>().enabled = true;
             _player.GetComponent<vThirdPersonController>().enabled = true;
             _player.GetComponent<PUN_ThirdPersonCameraVerify>().enabled = true;
@@ -185,4 +186,3 @@ namespace ASAD_Multiplyer.CustomEditor
 
     }
 }
-

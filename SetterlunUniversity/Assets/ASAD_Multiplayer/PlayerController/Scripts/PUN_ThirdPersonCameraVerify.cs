@@ -8,9 +8,14 @@ namespace ASAD_Multiplyer.PlayerController
     {
         private void Start()
         {
-            if (GetComponent<PhotonView>().IsMine == false && PhotonNetwork.IsConnected == true)
+            PhotonView view = GetComponent<PhotonView>();
+            if (!PhotonNetwork.IsConnected || view.IsMine)
             {
-                FindObjectOfType<vThirdPersonCamera>().mainTarget = transform;
+                vThirdPersonCamera camera = FindObjectOfType<vThirdPersonCamera>();
+                if (camera != null)
+                {
+                    camera.mainTarget = transform;
+                }
             }
         }
     }

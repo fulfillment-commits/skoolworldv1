@@ -60,6 +60,7 @@ namespace ASAD_Multiplyer.PlayerController
             animator = GetComponent<Animator>();
             // NameDisplay = GetComponentInChildren<PlayerNameDisplay>();
             view = GetComponent<PhotonView>();
+            _input = GetComponent<vThirdPersonInput>();
             vGenericAnimation[] vGenericAnimations = GetComponents<vGenericAnimation>();
             if (view.IsMine && PhotonNetwork.IsConnected)
             {
@@ -74,9 +75,8 @@ namespace ASAD_Multiplyer.PlayerController
                 if (GetComponent<vLadderAction>()) GetComponent<vLadderAction>().enabled = true;
 
 
-                if (GetComponent<vThirdPersonInput>())
+                if (_input != null)
                 {
-                    _input=GetComponent<vThirdPersonInput>();
                     _input.enabled = true;
                 }
                 // ChatCanvas.Instance.LoadAllPlayer();
@@ -96,6 +96,10 @@ namespace ASAD_Multiplyer.PlayerController
 
                 gameObject.GetComponent<Collider>().enabled = false;
                 gameObject.GetComponent<Rigidbody>().isKinematic = true;
+                if (_input != null)
+                {
+                    _input.enabled = false;
+                }
             }
 
             currentSceneName = SceneManager.GetActiveScene().name;
@@ -105,7 +109,10 @@ namespace ASAD_Multiplyer.PlayerController
             }
             
             LoadOutfit();
-            Invoke(nameof(DisableControl),0.5f);
+            if (view.IsMine || !PhotonNetwork.IsConnected)
+            {
+                Invoke(nameof(DisableControl),0.5f);
+            }
             DontDestroyOnLoad(gameObject);
         }
 
@@ -228,7 +235,7 @@ namespace ASAD_Multiplyer.PlayerController
 
         void OnDisable()
         {
-            if (view.IsMine)
+            if (view != null && view.IsMine)
             {
                 SceneManager.sceneLoaded -= OnSceneLoaded;
             }
@@ -252,13 +259,32 @@ namespace ASAD_Multiplyer.PlayerController
 
         public void SetControl(bool set)
         {
-            _input.enabled = set;
+            if (view != null && PhotonNetwork.IsConnected && !view.IsMine)
+            {
+                return;
+            }
+
+            if (_input != null)
+            {
+                _input.enabled = set;
+            }
+
             playingAnimation = !set;
-            gameObject.GetComponent<Rigidbody>().useGravity = set;
-            gameObject.GetComponent<Rigidbody>().isKinematic = !set;
-            gameObject.GetComponent<Collider>().enabled = set;
+            Rigidbody body = gameObject.GetComponent<Rigidbody>();
+            if (body != null)
+            {
+                body.useGravity = set;
+                body.isKinematic = !set;
+            }
+
+            Collider playerCollider = gameObject.GetComponent<Collider>();
+            if (playerCollider != null)
+            {
+                playerCollider.enabled = set;
+            }
+
             SetInputState(!set);
-            if (!set)
+            if (!set && animator != null)
             {
                 animator.SetFloat("InputVertical", 0f);
                 animator.SetFloat("InputMagnitude", 0.0f);
@@ -341,7 +367,7 @@ namespace ASAD_Multiplyer.PlayerController
         public void SetInputState(bool set)
         {
 
-            if (view.IsMine)
+            if (view.IsMine && _input != null && _input.cc != null)
             {
                 _input.cc.StopCharacter();
                 _input.SetLockAllInput(set);
