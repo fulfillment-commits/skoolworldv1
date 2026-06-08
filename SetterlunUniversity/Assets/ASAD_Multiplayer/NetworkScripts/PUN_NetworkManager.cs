@@ -191,7 +191,7 @@ namespace ASAD_Multiplyer.Network
             _connecting = true;
             _connectStatus = "Finding a room...";
             CustomDebug.Log("Connecting... " +PhotonNetwork.IsConnected);
-            // PhotonNetwork.PhotonServerSettings.AppSettings.FixedRegion = "us";
+            PhotonNetwork.PhotonServerSettings.AppSettings.FixedRegion = "us";
             if (PhotonNetwork.IsConnected)
             {
                 PhotonNetwork.JoinRandomRoom();

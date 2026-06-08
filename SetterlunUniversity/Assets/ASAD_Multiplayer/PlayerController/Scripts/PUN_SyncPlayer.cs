@@ -65,7 +65,7 @@ namespace ASAD_Multiplyer.PlayerController
             {
                 SceneManager.sceneLoaded += OnSceneLoaded;
                 currentSceneName = SceneManager.GetActiveScene().name;
-                view.RPC("SceneSwitch",RpcTarget.AllBuffered,currentSceneName);
+                view.RPC("SceneSwitch",RpcTarget.OthersBuffered,currentSceneName);
                 // outfit setup
                 
                 if (GetComponent<vHeadTrack>()) GetComponent<vHeadTrack>().enabled = true;
