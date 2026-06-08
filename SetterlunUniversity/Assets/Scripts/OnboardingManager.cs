@@ -172,26 +172,26 @@ public class OnboardingManager : MonoBehaviour
         ScreenManager.Instance.ShowScreen(ScreenType.MainWorld);
 
         // Sync with PlayerSpawnManager if it exists
-        if (PlayerSpawnManager.Instance != null && QuestSpawnManager.Instance != null)
-        {
-            int nextQuest = OnboardingQuestManager.Instance != null ? OnboardingQuestManager.Instance.GetNextIncompleteQuest() : 1;
-            string spawnPointName = "";
-            
-            if (nextQuest == -1)
-            {
-                spawnPointName = "Spawn_Final";
-            }
-            else
-            {
-                int index = nextQuest - 1;
-                if (index >= 0 && index < QuestSpawnManager.Instance.questSpawnPoints.Length)
-                {
-                    spawnPointName = QuestSpawnManager.Instance.questSpawnPoints[index];
-                }
-            }
-            
-            PlayerSpawnManager.Instance.CheckForSpawnPoint(spawnPointName);
-        }
+        // if (PlayerSpawnManager.Instance != null && QuestSpawnManager.Instance != null)
+        // {
+        //     int nextQuest = OnboardingQuestManager.Instance != null ? OnboardingQuestManager.Instance.GetNextIncompleteQuest() : 1;
+        //     string spawnPointName = "";
+        //     
+        //     if (nextQuest == -1)
+        //     {
+        //         spawnPointName = "Spawn_Final";
+        //     }
+        //     else
+        //     {
+        //         int index = nextQuest - 1;
+        //         if (index >= 0 && index < QuestSpawnManager.Instance.questSpawnPoints.Length)
+        //         {
+        //             spawnPointName = QuestSpawnManager.Instance.questSpawnPoints[index];
+        //         }
+        //     }
+        //     
+        //     PlayerSpawnManager.Instance.CheckForSpawnPoint(spawnPointName);
+        // }
 
         // Refresh World State based on quest completion
         if (QuestWorldStateManager.Instance != null)

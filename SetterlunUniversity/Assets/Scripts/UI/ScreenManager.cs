@@ -1,5 +1,7 @@
 using System;
 using System.Collections.Generic;
+using ASAD_Multiplyer.Network;
+using ASAD_Multiplyer.PlayerController;
 using UnityEngine;
 using Invector.vCharacterController;
 
@@ -174,12 +176,12 @@ public class ScreenManager : MonoBehaviour
         bool shouldLock = (currentScreen != ScreenType.None && currentScreen != ScreenType.MainWorld) || 
                          isDynamicPanelActive;
 
-        if (ReferencesManager.Instance != null && ReferencesManager.Instance.player != null)
+        if (PUN_NetworkManager.nm != null && PUN_NetworkManager.nm.myPlayer != null)
         {
-            var tpInput = ReferencesManager.Instance.player.GetComponent<vThirdPersonInput>();
-            if (tpInput != null)
+            var player = PUN_NetworkManager.nm.myPlayer.GetComponent<PUN_SyncPlayer>();
+            if (player != null)
             {
-                tpInput.SetLockAllInput(shouldLock);
+                player.SetControl(!shouldLock);
             }
         }
         

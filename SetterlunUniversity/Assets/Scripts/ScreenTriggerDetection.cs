@@ -1,3 +1,4 @@
+using ASAD_Multiplyer.Network;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -8,7 +9,7 @@ public class ScreenTriggerDetection : MonoBehaviour
     public Transform requiredDirection; // Reference direction
     public float directionThreshold = 0.7f;
     public Transform cameraPos;
-    // 1 = same direction, 0 = 90°, -1 = opposite
+    // 1 = same direction, 0 = 90ï¿½, -1 = opposite
 
     public Renderer screenRenderer;
 
@@ -37,7 +38,7 @@ public class ScreenTriggerDetection : MonoBehaviour
         cam.GetComponent<SmoothCameraMove>().MoveCamera(cameraPos); // Disable camera follow for cinematic effect
 
         Debug.Log("Video Activated!");
-        GameObject player = ReferencesManager.Instance.player;
+        GameObject player = PUN_NetworkManager.nm.myPlayer;
         player.SetActive(false);
         GamePlayUIManager.Instance.moveCamera.enabled = false;
         GamePlayUIManager.Instance.VideoControls.SetActive(true);
@@ -49,7 +50,7 @@ public class ScreenTriggerDetection : MonoBehaviour
     {
         VideoPlayerManager.Instance.StopVideo(); // Play first video as example
         Camera cam = Camera.main;
-        ReferencesManager.Instance.player.SetActive(true);
+        // ReferencesManager.Instance.player.SetActive(true);
         GamePlayUIManager.Instance.moveCamera.enabled = true;
         GamePlayUIManager.Instance.VideoControls.SetActive(false);
 

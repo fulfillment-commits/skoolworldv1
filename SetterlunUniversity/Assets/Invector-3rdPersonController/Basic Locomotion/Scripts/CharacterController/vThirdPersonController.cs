@@ -1,4 +1,5 @@
 ﻿using System.Collections;
+using Invector.vCamera;
 using UnityEngine;
 
 namespace Invector.vCharacterController
@@ -23,6 +24,24 @@ namespace Invector.vCharacterController
             MoveToPosition(targetPosition.position);
         }
 
+        public virtual void MoveToPositionRotaion(Transform targetPosition)
+        {
+            strafeSpeed.rotateWithCamera = false;
+            Debug.Log($"questrno before post {targetPosition.name} and pos {targetPosition.position} player pos {transform.position}");
+            MoveToPosition(targetPosition.position);
+            Debug.Log($"questrno after post {targetPosition.name} and player pos {transform.position}");
+
+            transform.rotation = targetPosition.rotation;
+            // RotateToPosition(targetPosition.eulerAngles);
+            Invoke(nameof(RestRotate), 0.5f);
+            vThirdPersonCamera.instance.Init();
+        }
+        
+        void RestRotate()
+        {
+            strafeSpeed.rotateWithCamera = true;
+        }
+
         /// <summary>
         /// Move the controller to a specific Position, you must Lock the Input first 
         /// </summary>
@@ -43,6 +62,8 @@ namespace Invector.vCharacterController
                 input = transform.InverseTransformDirection(dir.normalized);
                 moveDirection = dir.normalized;
             }
+
+            transform.position = targetPosition;
         }
 
         /// <summary>
