@@ -124,6 +124,7 @@ namespace ASAD_Multiplyer.PlayerController
                 view.RPC("LoadMyOutfit",RpcTarget.OthersBuffered,outfitId);
             }
         }
+        
         void DisableControl()
         {
             SetControl(false);

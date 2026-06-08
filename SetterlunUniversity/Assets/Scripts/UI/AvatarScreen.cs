@@ -1,3 +1,5 @@
+using ASAD_Multiplyer.Network;
+using ASAD_Multiplyer.PlayerController;
 using Bozo.ModularCharacters;
 using UnityEngine;
 using UnityEngine.UI;
@@ -70,6 +72,7 @@ public class AvatarScreen : ScreenBase
     private void LoadSavedAvatarIndex()
     {
         selectedAvatarIndex = PlayerPrefs.GetInt(PLAYERPREFS_AVATAR_INDEX, 0);
+        Debug.Log($"selectedAvatarIndex: {selectedAvatarIndex}");
         // Ensure index is within bounds if sprites array changed
         if (avatarData != null && avatarData.characterObjects.Length > 0)
         {
@@ -98,6 +101,7 @@ public class AvatarScreen : ScreenBase
         // Save locally
         PlayerPrefs.SetInt(PLAYERPREFS_AVATAR_INDEX, selectedAvatarIndex);
         PlayerPrefs.Save();
+        Debug.Log($"selectedAvatarIndex: {PlayerPrefs.GetInt(PLAYERPREFS_AVATAR_INDEX, 0)}");
         
         // Save to backend
         string userId = PlayerPrefs.GetString("OnboardingUserId_Str", "");
@@ -107,6 +111,7 @@ public class AvatarScreen : ScreenBase
                 if (success)
                 {
                     OnboardingQuestManager.Instance?.SetAvatarIndex(selectedAvatarIndex);
+                    PUN_NetworkManager.nm.myPlayer.GetComponent<PUN_SyncPlayer>().LoadOutfit();
                     OnboardingManager.Instance.EnterWorld();
                 }
                 else
@@ -124,6 +129,7 @@ public class AvatarScreen : ScreenBase
         {
             Debug.LogWarning("⚠️ No User ID found for sync. Proceeding locally.");
             OnboardingQuestManager.Instance?.SetAvatarIndex(selectedAvatarIndex);
+            PUN_NetworkManager.nm.myPlayer.GetComponent<PUN_SyncPlayer>().LoadOutfit();
             OnboardingManager.Instance.EnterWorld();
         }
     }
