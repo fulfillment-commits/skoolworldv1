@@ -58440,7 +58440,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 953cd682468df274f9bff68a8981324e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  pendingSpawnPoint: 
 --- !u!4 &1148504367
 Transform:
   m_ObjectHideFlags: 0
@@ -61727,6 +61726,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cfe3263b0025edd4aa990cda6800fa80, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  questSpawnPoints: []
   loadingCanvas: {fileID: 1995582347}
   spawnPos: {fileID: 1397937373}
   env: {fileID: 1788569872}
@@ -103398,6 +103398,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 935448166385801545, guid: 94403ba9d0c9ff842bc501989dfefa57, type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 1467648544232734487, guid: 94403ba9d0c9ff842bc501989dfefa57, type: 3}
       propertyPath: m_SortingOrder
       value: 100
