@@ -83,7 +83,7 @@ public class SceneReference : MonoBehaviour
         //     
         // }
 
-        if (PhotonNetwork.InRoom)
+        if (PhotonNetwork.InRoom && spawnPos == null)
         {
             string questNo = SceneTransitionManager.Instance.GetTargetSpawnPoint();
             spawnPos=questSpawnPoints.ToList().FirstOrDefault(a => a.name == questNo)?.transform;

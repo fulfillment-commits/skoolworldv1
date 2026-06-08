@@ -21,14 +21,14 @@ namespace Invector.vCharacterController
         /// <param name="targetPosition"></param>
         public virtual void MoveToPosition(Transform targetPosition)
         {
-            MoveToPosition(targetPosition.position);
+            MoveToPosition(targetPosition.position, targetPosition.right);
         }
 
         public virtual void MoveToPositionRotaion(Transform targetPosition)
         {
             strafeSpeed.rotateWithCamera = false;
             Debug.Log($"questrno before post {targetPosition.name} and pos {targetPosition.position} player pos {transform.position}");
-            MoveToPosition(targetPosition.position);
+            MoveToPosition(targetPosition.position, targetPosition.right);
             Debug.Log($"questrno after post {targetPosition.name} and player pos {transform.position}");
 
             transform.rotation = targetPosition.rotation;
@@ -48,6 +48,17 @@ namespace Invector.vCharacterController
         /// <param name="targetPosition"></param>
         public virtual void MoveToPosition(Vector3 targetPosition)
         {
+            MoveToPosition(targetPosition, transform.right);
+        }
+
+        /// <summary>
+        /// Move the controller to a specific Position and look for a nearby side position if another Player is already there.
+        /// </summary>
+        /// <param name="targetPosition"></param>
+        /// <param name="sideDirection"></param>
+        public virtual void MoveToPosition(Vector3 targetPosition, Vector3 sideDirection)
+        {
+            targetPosition = FindAvailableMoveToPosition(targetPosition, sideDirection);
             Vector3 dir = targetPosition - transform.position;
             dir.y = 0;
             /*dir = dir.normalized * Mathf.Min(1f, dir.magnitude);*/           /*That is to make smootly stop*/
@@ -64,6 +75,92 @@ namespace Invector.vCharacterController
             }
 
             transform.position = targetPosition;
+        }
+
+        /// <summary>
+        /// Returns targetPosition, or the nearest left/right position, when another collider tagged Player is already at targetPosition.
+        /// </summary>
+        public virtual Vector3 FindAvailableMoveToPosition(Vector3 targetPosition, Vector3 sideDirection, string playerTag = "Player", float offsetStep = 0.75f, int maxSideSteps = 6)
+        {
+            if (!IsMoveToPositionOccupiedByPlayer(targetPosition, playerTag))
+            {
+                return targetPosition;
+            }
+
+            sideDirection.y = 0f;
+            if (sideDirection.sqrMagnitude < 0.001f)
+            {
+                sideDirection = transform.right;
+                sideDirection.y = 0f;
+            }
+
+            sideDirection.Normalize();
+
+            for (int step = 1; step <= maxSideSteps; step++)
+            {
+                float offset = offsetStep * step;
+                Vector3 leftPosition = targetPosition - sideDirection * offset;
+                Vector3 rightPosition = targetPosition + sideDirection * offset;
+
+                if (!IsMoveToPositionOccupiedByPlayer(leftPosition, playerTag))
+                {
+                    return leftPosition;
+                }
+
+                if (!IsMoveToPositionOccupiedByPlayer(rightPosition, playerTag))
+                {
+                    return rightPosition;
+                }
+            }
+
+            return targetPosition;
+        }
+
+        protected virtual bool IsMoveToPositionOccupiedByPlayer(Vector3 position, string playerTag)
+        {
+            if (_capsuleCollider == null)
+            {
+                _capsuleCollider = GetComponent<CapsuleCollider>();
+            }
+
+            float radius = _capsuleCollider != null ? _capsuleCollider.radius : 0.4f;
+            float height = _capsuleCollider != null ? Mathf.Max(_capsuleCollider.height, radius * 2f) : 1.8f;
+            Vector3 center = position + (_capsuleCollider != null ? transform.TransformVector(_capsuleCollider.center) : transform.up * (height * 0.5f));
+            float capsuleHalfHeight = Mathf.Max((height * 0.5f) - radius, 0f);
+            Vector3 point1 = center + transform.up * capsuleHalfHeight;
+            Vector3 point2 = center - transform.up * capsuleHalfHeight;
+            Collider[] hits = Physics.OverlapCapsule(point1, point2, radius, ~0, QueryTriggerInteraction.Ignore);
+
+            for (int i = 0; i < hits.Length; i++)
+            {
+                Collider hit = hits[i];
+                if (hit == null || hit.transform == transform || hit.transform.IsChildOf(transform))
+                {
+                    continue;
+                }
+
+                if (HasTagInParents(hit.transform, playerTag))
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        protected virtual bool HasTagInParents(Transform target, string targetTag)
+        {
+            while (target != null)
+            {
+                if (string.Equals(target.tag, targetTag, System.StringComparison.OrdinalIgnoreCase))
+                {
+                    return true;
+                }
+
+                target = target.parent;
+            }
+
+            return false;
         }
 
         /// <summary>
