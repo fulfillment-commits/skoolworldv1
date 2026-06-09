@@ -33,7 +33,9 @@ public class QuestTrigger : MonoBehaviour
             if (videoQuest)
             {
                 Action callback = (onInteractionClickAfterCompletion.GetPersistentEventCount() > 0) ? () => onInteractionClickAfterCompletion?.Invoke() : null;
-                QuestInteractionController.OnRequestShow?.Invoke(questNumber, questScreenType, questTitle, afterCompletionButtonText, callback);
+                QuestInteractionController.OnRequestShow?.Invoke(questNumber, questScreenType, questTitle, interactionButtonText, callback);
+
+                // QuestInteractionController.OnRequestShow?.Invoke(questNumber, questScreenType, questTitle, afterCompletionButtonText, callback);
                 return;
             }
             InvokeTriggerEvents(true);
