@@ -66,7 +66,7 @@ namespace ASAD_Multiplyer.PlayerController
             {
                 SceneManager.sceneLoaded += OnSceneLoaded;
                 currentSceneName = SceneManager.GetActiveScene().name;
-                view.RPC("SceneSwitch",RpcTarget.OthersBuffered,currentSceneName);
+                // view.RPC("SceneSwitch",RpcTarget.OthersBuffered,currentSceneName);
                 // outfit setup
                 
                 if (GetComponent<vHeadTrack>()) GetComponent<vHeadTrack>().enabled = true;
@@ -299,10 +299,29 @@ namespace ASAD_Multiplyer.PlayerController
         [PunRPC]
         void SceneSwitch(string sceneName)
         {
+            // 1. Log the entry point and the target scene
+            CustomDebug.Log($"[SceneSwitch] Initiating scene switch. Target Scene: '{sceneName}' (Previous: '{currentSceneName}')");
+    
             currentSceneName = sceneName;
-            CustomDebug.Log("rpc scene change "+sceneName);
+
+            // Find all sync players
             PUN_SyncPlayer[] allPlayers = FindObjectsOfType<PUN_SyncPlayer>();
-            allPlayers.First(a=>a.view.IsMine)?.OtherPlayerChangeScene();
+            CustomDebug.Log($"[SceneSwitch] Found {allPlayers.Length} total PUN_SyncPlayer(s) in the hierarchy.");
+
+            // 2. Safely find the local player using FirstOrDefault
+            PUN_SyncPlayer localPlayer = allPlayers.FirstOrDefault(a => a.view.IsMine);
+
+            if (localPlayer != null)
+            {
+                // 3. Log successful local player tracking
+                CustomDebug.Log($"[SceneSwitch] Local player found (ViewID: {localPlayer.view.ViewID}). Calling OtherPlayerChangeScene().");
+                localPlayer.OtherPlayerChangeScene();
+            }
+            else
+            {
+                // 4. Log a warning if the local player couldn't be found (crucial for networking debug)
+                CustomDebug.Log($"[SceneSwitch] Scene change triggered, but no local player (IsMine) was found in the scene.");
+            }
         }
 
         [PunRPC]
