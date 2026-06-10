@@ -7,6 +7,8 @@ namespace Invector.vCharacterController
     [vClassHeader("THIRD PERSON CONTROLLER", iconName = "controllerIcon")]
     public class vThirdPersonController : vThirdPersonAnimator
     {
+        private const float MoveToPositionClearancePercent = 2f;
+
         /// <summary>
         /// When Disabling the Controller Component we change the Capsule Collider to Fullsize to avoid sinking in the ground
         /// </summary>
@@ -80,7 +82,7 @@ namespace Invector.vCharacterController
         /// <summary>
         /// Returns targetPosition, or the nearest left/right position, when another collider tagged Player is already at targetPosition.
         /// </summary>
-        public virtual Vector3 FindAvailableMoveToPosition(Vector3 targetPosition, Vector3 sideDirection, string playerTag = "Player", float offsetStep = 0.75f, int maxSideSteps = 6)
+        public virtual Vector3 FindAvailableMoveToPosition(Vector3 targetPosition, Vector3 sideDirection, string playerTag = "Player", float offsetStep = 0.8f, int maxSideSteps = 6)
         {
             if (!IsMoveToPositionOccupiedByPlayer(targetPosition, playerTag))
             {
@@ -95,6 +97,7 @@ namespace Invector.vCharacterController
             }
 
             sideDirection.Normalize();
+            offsetStep = Mathf.Max(offsetStep, GetMoveToPositionClearanceDistance());
 
             for (int step = 1; step <= maxSideSteps; step++)
             {
@@ -125,11 +128,12 @@ namespace Invector.vCharacterController
 
             float radius = _capsuleCollider != null ? _capsuleCollider.radius : 0.4f;
             float height = _capsuleCollider != null ? Mathf.Max(_capsuleCollider.height, radius * 2f) : 1.8f;
+            float clearance = radius * 2f * MoveToPositionClearancePercent;
             Vector3 center = position + (_capsuleCollider != null ? transform.TransformVector(_capsuleCollider.center) : transform.up * (height * 0.5f));
             float capsuleHalfHeight = Mathf.Max((height * 0.5f) - radius, 0f);
             Vector3 point1 = center + transform.up * capsuleHalfHeight;
             Vector3 point2 = center - transform.up * capsuleHalfHeight;
-            Collider[] hits = Physics.OverlapCapsule(point1, point2, radius, ~0, QueryTriggerInteraction.Ignore);
+            Collider[] hits = Physics.OverlapCapsule(point1, point2, radius + clearance, ~0, QueryTriggerInteraction.Ignore);
 
             for (int i = 0; i < hits.Length; i++)
             {
@@ -146,6 +150,17 @@ namespace Invector.vCharacterController
             }
 
             return false;
+        }
+
+        protected virtual float GetMoveToPositionClearanceDistance()
+        {
+            if (_capsuleCollider == null)
+            {
+                _capsuleCollider = GetComponent<CapsuleCollider>();
+            }
+
+            float radius = _capsuleCollider != null ? _capsuleCollider.radius : 0.4f;
+            return radius * 2f * (1f + MoveToPositionClearancePercent);
         }
 
         protected virtual bool HasTagInParents(Transform target, string targetTag)

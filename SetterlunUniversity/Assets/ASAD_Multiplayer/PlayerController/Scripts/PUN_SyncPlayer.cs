@@ -1,6 +1,8 @@
 ﻿using System.Linq;
 using UnityEngine;
 using Photon.Pun;
+using Photon.Realtime;
+using ExitGames.Client.Photon;
 using Invector.vCharacterController;       
 using Invector.vCharacterController.vActions;
 using UnityEngine.SceneManagement;
@@ -11,8 +13,10 @@ namespace ASAD_Multiplyer.PlayerController
     [RequireComponent(typeof(PhotonTransformView))]
     [RequireComponent(typeof(PhotonAnimatorView))]
     [RequireComponent(typeof(PhotonRigidbodyView))]
-    public class PUN_SyncPlayer : MonoBehaviour, IPunObservable
+    public class PUN_SyncPlayer : MonoBehaviourPunCallbacks, IPunObservable
     {
+        private const string CurrentSceneProperty = "currentScene";
+
         #region Reference Components
 
         private string waveAinamtion="Wave";
@@ -52,6 +56,11 @@ namespace ASAD_Multiplyer.PlayerController
 
         #region Initializations
 
+        void Awake()
+        {
+            view = GetComponent<PhotonView>();
+        }
+
         void Start()
         {
             
@@ -59,14 +68,17 @@ namespace ASAD_Multiplyer.PlayerController
             
             animator = GetComponent<Animator>();
             // NameDisplay = GetComponentInChildren<PlayerNameDisplay>();
-            view = GetComponent<PhotonView>();
+            if (view == null)
+            {
+                view = GetComponent<PhotonView>();
+            }
             _input = GetComponent<vThirdPersonInput>();
             vGenericAnimation[] vGenericAnimations = GetComponents<vGenericAnimation>();
             if (view.IsMine && PhotonNetwork.IsConnected)
             {
                 SceneManager.sceneLoaded += OnSceneLoaded;
                 currentSceneName = SceneManager.GetActiveScene().name;
-                // view.RPC("SceneSwitch",RpcTarget.OthersBuffered,currentSceneName);
+                SetCurrentSceneProperty(currentSceneName);
                 // outfit setup
                 
                 if (GetComponent<vHeadTrack>()) GetComponent<vHeadTrack>().enabled = true;
@@ -103,6 +115,7 @@ namespace ASAD_Multiplyer.PlayerController
             }
 
             currentSceneName = SceneManager.GetActiveScene().name;
+            RefreshPlayersForCurrentScene();
             if (_syncBones == true)
             {
                 SetBones();
@@ -178,7 +191,7 @@ namespace ASAD_Multiplyer.PlayerController
                     server_chest = local_chest.localRotation;
                 }
                 catch (System.Exception e)
-                {
+                { 
                     Debug.LogError(e);
                 }
             }
@@ -244,18 +257,82 @@ namespace ASAD_Multiplyer.PlayerController
         
         void OnSceneLoaded(Scene scene, LoadSceneMode mode)
         {
-            // if (string.Equals(scene.name, "OfficeBuilding_Small"))
-            // {
-            //     view.RPC("SceneSwitch",RpcTarget.AllBuffered,scene.name+URLImageRetriever.instance.officeScene);
-            // }
-            // else if (string.Equals(scene.name, "Sci_Fi Gallery"))
-            // {
-            //     view.RPC("SceneSwitch",RpcTarget.AllBuffered,scene.name+URLImageRetriever.instance.otherRoomId);
-            // }
-            // else
+            currentSceneName = scene.name;
+            SetCurrentSceneProperty(scene.name);
+            RefreshPlayersForCurrentScene();
+        }
+
+        private void SetCurrentSceneProperty(string sceneName)
+        {
+            if (!PhotonNetwork.IsConnected || view == null || !view.IsMine)
             {
-                view.RPC("SceneSwitch",RpcTarget.AllBuffered,scene.name);
+                return;
             }
+
+            PhotonNetwork.LocalPlayer.SetCustomProperties(new Hashtable
+            {
+                { CurrentSceneProperty, sceneName }
+            });
+
+            CustomDebug.Log($"[ScenePresence] Local player scene set to '{sceneName}'.");
+        }
+
+        public override void OnPlayerPropertiesUpdate(Player targetPlayer, Hashtable changedProps)
+        {
+            if (changedProps != null && changedProps.ContainsKey(CurrentSceneProperty))
+            {
+                RefreshPlayersForCurrentScene();
+            }
+        }
+
+        public override void OnPlayerEnteredRoom(Player newPlayer)
+        {
+            RefreshPlayersForCurrentScene();
+        }
+
+        public override void OnPlayerLeftRoom(Player otherPlayer)
+        {
+            RefreshPlayersForCurrentScene();
+        }
+
+        private void RefreshPlayersForCurrentScene()
+        {
+            string localSceneName = SceneManager.GetActiveScene().name;
+            PUN_SyncPlayer[] allPlayers = FindObjectsOfType<PUN_SyncPlayer>();
+
+            foreach (PUN_SyncPlayer player in allPlayers)
+            {
+                if (player == null)
+                {
+                    continue;
+                }
+
+                PhotonView playerView = player.view != null ? player.view : player.GetComponent<PhotonView>();
+                if (playerView == null)
+                {
+                    continue;
+                }
+
+                string playerSceneName = playerView.IsMine ? localSceneName : GetPlayerScene(playerView.Owner);
+                player.currentSceneName = playerSceneName;
+
+                if (player.charModel != null)
+                {
+                    player.charModel.SetActive(playerView.IsMine || string.Equals(playerSceneName, localSceneName));
+                }
+            }
+        }
+
+        private static string GetPlayerScene(Player player)
+        {
+            if (player != null &&
+                player.CustomProperties != null &&
+                player.CustomProperties.TryGetValue(CurrentSceneProperty, out object sceneValue))
+            {
+                return sceneValue as string;
+            }
+
+            return string.Empty;
         }
 
         public void SetControl(bool set)
@@ -299,29 +376,8 @@ namespace ASAD_Multiplyer.PlayerController
         [PunRPC]
         void SceneSwitch(string sceneName)
         {
-            // 1. Log the entry point and the target scene
-            CustomDebug.Log($"[SceneSwitch] Initiating scene switch. Target Scene: '{sceneName}' (Previous: '{currentSceneName}')");
-    
-            currentSceneName = sceneName;
-
-            // Find all sync players
-            PUN_SyncPlayer[] allPlayers = FindObjectsOfType<PUN_SyncPlayer>();
-            CustomDebug.Log($"[SceneSwitch] Found {allPlayers.Length} total PUN_SyncPlayer(s) in the hierarchy.");
-
-            // 2. Safely find the local player using FirstOrDefault
-            PUN_SyncPlayer localPlayer = allPlayers.FirstOrDefault(a => a.view.IsMine);
-
-            if (localPlayer != null)
-            {
-                // 3. Log successful local player tracking
-                CustomDebug.Log($"[SceneSwitch] Local player found (ViewID: {localPlayer.view.ViewID}). Calling OtherPlayerChangeScene().");
-                localPlayer.OtherPlayerChangeScene();
-            }
-            else
-            {
-                // 4. Log a warning if the local player couldn't be found (crucial for networking debug)
-                CustomDebug.Log($"[SceneSwitch] Scene change triggered, but no local player (IsMine) was found in the scene.");
-            }
+            CustomDebug.Log($"[SceneSwitch] Ignoring legacy buffered scene RPC for '{sceneName}'. Scene visibility now uses player custom properties.");
+            RefreshPlayersForCurrentScene();
         }
 
         [PunRPC]
@@ -339,11 +395,7 @@ namespace ASAD_Multiplyer.PlayerController
         
         public void OtherPlayerChangeScene()
         {
-            PUN_SyncPlayer[] allPlayers = FindObjectsOfType<PUN_SyncPlayer>();
-            foreach (var player in allPlayers)
-            {
-                player.charModel.SetActive(string.Equals(player.currentSceneName, currentSceneName) );
-            }
+            RefreshPlayersForCurrentScene();
         }
         
         #region Local Actions Based on Server Changes
