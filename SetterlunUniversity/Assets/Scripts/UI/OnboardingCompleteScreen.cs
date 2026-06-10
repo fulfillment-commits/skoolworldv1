@@ -69,9 +69,9 @@ public class OnboardingCompleteScreen : ScreenBase
     {
         if (OnboardingManager.Instance == null) return;
 
-        if (userLevelText != null) userLevelText.text = "Level: Onboarded";
-        if (userStageText != null) userStageText.text = $"Stage: {OnboardingManager.Instance.GetUserStage()}";
-        if (keyWeaknessText != null) keyWeaknessText.text = $"Key Weakness: {OnboardingManager.Instance.GetKeyWeakness()}";
+        if (userLevelText != null) userLevelText.text = "Onboarded";
+        if (userStageText != null) userStageText.text = $"{OnboardingManager.Instance.GetUserStage()}";
+        if (keyWeaknessText != null) keyWeaknessText.text = $"{OnboardingManager.Instance.GetKeyWeakness()}";
     }
 
     private void UpdatePathVisuals()
