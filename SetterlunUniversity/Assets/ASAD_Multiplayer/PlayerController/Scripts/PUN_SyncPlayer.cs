@@ -80,6 +80,7 @@ namespace ASAD_Multiplyer.PlayerController
         private Quaternion _stableSpine;
         private Quaternion _stableChest;
 
+
         private struct NetworkFrame
         {
             public double Time;
@@ -177,6 +178,8 @@ namespace ASAD_Multiplyer.PlayerController
                 if (GetComponent<CursorToggle>()) GetComponent<CursorToggle>().enabled = true;
                 if (GetComponent<vGenericAction>()) GetComponent<vGenericAction>().enabled = true;
                 if (GetComponent<vLadderAction>()) GetComponent<vLadderAction>().enabled = true;
+                if (GetComponent<PlayerTeleport>()) GetComponent<PlayerTeleport>().enabled = true;
+                if (GetComponent<KeyboardDirectInput>()) GetComponent<KeyboardDirectInput>().enabled = true;
 
 
                 if (_input != null)
