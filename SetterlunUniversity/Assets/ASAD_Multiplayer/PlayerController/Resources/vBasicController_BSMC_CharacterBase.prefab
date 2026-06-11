@@ -1047,7 +1047,7 @@ MonoBehaviour:
     SynchronizeType: 2
     Name: ActionState
   - Type: 9
-    SynchronizeType: 2
+    SynchronizeType: 1
     Name: ResetState
   - Type: 4
     SynchronizeType: 2
@@ -1083,7 +1083,7 @@ MonoBehaviour:
     SynchronizeType: 2
     Name: IdleRandom
   - Type: 9
-    SynchronizeType: 2
+    SynchronizeType: 1
     Name: IdleRandomTrigger
   - Type: 4
     SynchronizeType: 2
@@ -1122,10 +1122,13 @@ MonoBehaviour:
   animator: {fileID: 0}
   characterOutfit: {fileID: 8882225952363404411}
   _syncBones: 1
-  _boneLerpRate: 18
-  _networkInterpolationBackTime: 0.12
-  _networkExtrapolateLimit: 0.08
+  _boneLerpRate: 12
+  _networkInterpolationBackTime: 0.15
+  _networkExtrapolateLimit: 0.05
   _networkTeleportDistance: 5
+  _networkMaxInterpolationSpeed: 16
+  _boneSendDeadZoneDegrees: 0.25
+  _boneReceiveDeadZoneDegrees: 0.35
   sit: 0
   sitting: {fileID: 0}
 --- !u!114 &34917808343204673

@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Invector.vCamera;
 using Invector.vCharacterController;
+using ASAD_Multiplyer.PlayerController;
 using Unity.VisualScripting;
 using Hashtable = ExitGames.Client.Photon.Hashtable;
 using Random = UnityEngine.Random;
@@ -171,11 +172,49 @@ namespace ASAD_Multiplyer.Network
             
             if (setPlayerPos)
             {
-                
-                myPlayer.GetComponent<vThirdPersonController>().MoveToPositionRotaion(pos);
+                PUN_SyncPlayer localPlayer = GetLocalPlayerSync();
+                if (localPlayer != null)
+                {
+                    myPlayer = localPlayer.gameObject;
+                    localPlayer.TeleportLocalPlayerTo(pos);
+                }
+                else if (myPlayer != null)
+                {
+                    myPlayer.GetComponent<vThirdPersonController>().MoveToPositionRotaion(pos);
+                }
                 // myPlayer.GetComponent<vThirdPersonController>().RotateToPosition(pos.eulerAngles);
                 // myPlayer.transform.position = pos.position;
             }
+        }
+
+        private PUN_SyncPlayer GetLocalPlayerSync()
+        {
+            if (myPlayer != null)
+            {
+                PhotonView playerView = myPlayer.GetComponent<PhotonView>();
+                PUN_SyncPlayer playerSync = myPlayer.GetComponent<PUN_SyncPlayer>();
+                if (playerView != null && playerView.IsMine && playerSync != null)
+                {
+                    return playerSync;
+                }
+            }
+
+            PUN_SyncPlayer[] players = FindObjectsOfType<PUN_SyncPlayer>();
+            foreach (PUN_SyncPlayer player in players)
+            {
+                if (player == null)
+                {
+                    continue;
+                }
+
+                PhotonView playerView = player.view != null ? player.view : player.GetComponent<PhotonView>();
+                if (playerView != null && playerView.IsMine)
+                {
+                    return player;
+                }
+            }
+
+            return null;
         }
         
         #region Callable Methods

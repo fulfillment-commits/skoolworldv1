@@ -49,20 +49,36 @@ namespace ASAD_Multiplyer.PlayerController
         private bool _syncBones = true;
 
         [SerializeField]
-        private float _boneLerpRate = 18.0f;
+        private float _boneLerpRate = 12.0f;
 
         [SerializeField]
-        private float _networkInterpolationBackTime = 0.12f;
+        private float _networkInterpolationBackTime = 0.15f;
 
         [SerializeField]
-        private float _networkExtrapolateLimit = 0.08f;
+        private float _networkExtrapolateLimit = 0.05f;
 
         [SerializeField]
         private float _networkTeleportDistance = 5f;
 
+        [SerializeField]
+        private float _networkMaxInterpolationSpeed = 16f;
+
+        [SerializeField]
+        private float _boneSendDeadZoneDegrees = 0.25f;
+
+        [SerializeField]
+        private float _boneReceiveDeadZoneDegrees = 0.35f;
+
         private readonly List<NetworkFrame> _networkFrames = new List<NetworkFrame>(8);
         private Rigidbody _body;
+        private vThirdPersonController _controller;
         private bool _hasNetworkTransform;
+        private bool _hasStableBoneRotations;
+        private double _ignoreFramesBeforeTime;
+        private Quaternion _stableHead;
+        private Quaternion _stableNeck;
+        private Quaternion _stableSpine;
+        private Quaternion _stableChest;
 
         private struct NetworkFrame
         {
@@ -84,6 +100,7 @@ namespace ASAD_Multiplyer.PlayerController
         {
             view = GetComponent<PhotonView>();
             _body = GetComponent<Rigidbody>();
+            _controller = GetComponent<vThirdPersonController>();
             ConfigureNetworkSync();
         }
 
@@ -144,6 +161,10 @@ namespace ASAD_Multiplyer.PlayerController
             }
             ConfigureNetworkSync();
             _input = GetComponent<vThirdPersonInput>();
+            if (_controller == null)
+            {
+                _controller = GetComponent<vThirdPersonController>();
+            }
             vGenericAnimation[] vGenericAnimations = GetComponents<vGenericAnimation>();
             if (view.IsMine && PhotonNetwork.IsConnected)
             {
@@ -167,6 +188,17 @@ namespace ASAD_Multiplyer.PlayerController
             }
             else
             {
+                if (_controller != null)
+                {
+                    _controller.enabled = false;
+                }
+
+                vHeadTrack headTrack = GetComponent<vHeadTrack>();
+                if (headTrack != null)
+                {
+                    headTrack.enabled = false;
+                }
+
                 foreach (var vAni in vGenericAnimations)
                 {
                     vAni.enabled = false;
@@ -304,10 +336,11 @@ namespace ASAD_Multiplyer.PlayerController
                         SetBones();
                     }
 
-                    stream.SendNext(local_head != null ? local_head.localRotation : server_head);
-                    stream.SendNext(local_neck != null ? local_neck.localRotation : server_neck);
-                    stream.SendNext(local_spine != null ? local_spine.localRotation : server_spine);
-                    stream.SendNext(local_chest != null ? local_chest.localRotation : server_chest);
+                    stream.SendNext(GetStableBoneRotation(local_head, ref _stableHead));
+                    stream.SendNext(GetStableBoneRotation(local_neck, ref _stableNeck));
+                    stream.SendNext(GetStableBoneRotation(local_spine, ref _stableSpine));
+                    stream.SendNext(GetStableBoneRotation(local_chest, ref _stableChest));
+                    _hasStableBoneRotations = true;
                     // stream.SendNext(animator.GetFloat("Speed")); // Replace "Speed" with your parameter names
                     // stream.SendNext(animator.GetBool("isJumping")); // Example: Add all relevant parameters
                 }
@@ -318,10 +351,10 @@ namespace ASAD_Multiplyer.PlayerController
                     potential_spine = (Quaternion)stream.ReceiveNext();
                     potential_chest = (Quaternion)stream.ReceiveNext();
 
-                    receivedFrame.Head = GetValidRotation(potential_head, server_head);
-                    receivedFrame.Neck = GetValidRotation(potential_neck, server_neck);
-                    receivedFrame.Spine = GetValidRotation(potential_spine, server_spine);
-                    receivedFrame.Chest = GetValidRotation(potential_chest, server_chest);
+                    receivedFrame.Head = GetFilteredBoneTarget(potential_head, server_head);
+                    receivedFrame.Neck = GetFilteredBoneTarget(potential_neck, server_neck);
+                    receivedFrame.Spine = GetFilteredBoneTarget(potential_spine, server_spine);
+                    receivedFrame.Chest = GetFilteredBoneTarget(potential_chest, server_chest);
                 }
             }
 
@@ -489,6 +522,122 @@ namespace ASAD_Multiplyer.PlayerController
         {
             RefreshPlayersForCurrentScene();
         }
+
+        public void TeleportLocalPlayerTo(Transform targetPosition)
+        {
+            if (targetPosition == null)
+            {
+                return;
+            }
+
+            if (PhotonNetwork.IsConnected && view != null && !view.IsMine)
+            {
+                CustomDebug.Log("[NetworkTeleport] Ignored teleport request on a non-owned player.");
+                return;
+            }
+
+            if (_controller == null)
+            {
+                _controller = GetComponent<vThirdPersonController>();
+            }
+
+            if (_body == null)
+            {
+                _body = GetComponent<Rigidbody>();
+            }
+
+            ClearNetworkMovementState(PhotonNetwork.Time);
+            ResetLocalMotion();
+
+            if (_controller != null)
+            {
+                _controller.StopCharacter();
+                _controller.MoveToPositionRotaion(targetPosition);
+            }
+            else
+            {
+                transform.position = targetPosition.position;
+                transform.rotation = targetPosition.rotation;
+            }
+
+            ResetLocalMotion();
+            Physics.SyncTransforms();
+            SetNetworkFrameFromCurrentTransform(PhotonNetwork.Time);
+
+            if (PhotonNetwork.IsConnected && view != null && view.IsMine)
+            {
+                view.RPC(nameof(SnapRemotePlayerTo), RpcTarget.Others, transform.position, transform.rotation);
+                PhotonNetwork.SendAllOutgoingCommands();
+            }
+        }
+
+        private void ResetLocalMotion()
+        {
+            if (_body == null)
+            {
+                return;
+            }
+
+            _body.velocity = Vector3.zero;
+            _body.angularVelocity = Vector3.zero;
+            _body.position = transform.position;
+            _body.rotation = transform.rotation;
+            _body.WakeUp();
+        }
+
+        private void ClearNetworkMovementState(double time)
+        {
+            _networkFrames.Clear();
+            _ignoreFramesBeforeTime = time;
+            _hasNetworkTransform = false;
+        }
+
+        private void SetNetworkFrameFromCurrentTransform(double time)
+        {
+            NetworkFrame frame = new NetworkFrame
+            {
+                Time = time,
+                Position = transform.position,
+                Rotation = transform.rotation,
+                Velocity = Vector3.zero,
+                Head = server_head,
+                Neck = server_neck,
+                Spine = server_spine,
+                Chest = server_chest
+            };
+
+            _networkFrames.Clear();
+            _networkFrames.Add(frame);
+            _hasNetworkTransform = true;
+        }
+
+        [PunRPC]
+        private void SnapRemotePlayerTo(Vector3 position, Quaternion rotation, PhotonMessageInfo info)
+        {
+            if (view != null && view.IsMine)
+            {
+                return;
+            }
+
+            transform.SetPositionAndRotation(position, rotation);
+
+            if (_body == null)
+            {
+                _body = GetComponent<Rigidbody>();
+            }
+
+            if (_body != null)
+            {
+                _body.velocity = Vector3.zero;
+                _body.angularVelocity = Vector3.zero;
+                _body.position = position;
+                _body.rotation = rotation;
+            }
+
+            Physics.SyncTransforms();
+            ClearNetworkMovementState(info.SentServerTime);
+            SetNetworkFrameFromCurrentTransform(info.SentServerTime);
+        }
         
         #region Local Actions Based on Server Changes
 
@@ -526,6 +675,11 @@ namespace ASAD_Multiplyer.PlayerController
 
         private void AddNetworkFrame(NetworkFrame frame)
         {
+            if (frame.Time < _ignoreFramesBeforeTime)
+            {
+                return;
+            }
+
             if (!notNan(frame.Rotation))
             {
                 frame.Rotation = transform.rotation;
@@ -586,10 +740,14 @@ namespace ASAD_Multiplyer.PlayerController
 
         private NetworkFrame LerpFrame(NetworkFrame from, NetworkFrame to, float t)
         {
+            float snapshotDuration = Mathf.Max((float)(to.Time - from.Time), 0.0001f);
+            Vector3 fromVelocity = Vector3.ClampMagnitude(from.Velocity, _networkMaxInterpolationSpeed);
+            Vector3 toVelocity = Vector3.ClampMagnitude(to.Velocity, _networkMaxInterpolationSpeed);
+
             return new NetworkFrame
             {
                 Time = Mathf.Lerp((float)from.Time, (float)to.Time, t),
-                Position = Vector3.Lerp(from.Position, to.Position, t),
+                Position = HermitePosition(from.Position, fromVelocity * snapshotDuration, to.Position, toVelocity * snapshotDuration, t),
                 Rotation = Quaternion.Slerp(from.Rotation, to.Rotation, t),
                 Velocity = Vector3.Lerp(from.Velocity, to.Velocity, t),
                 Head = Quaternion.Slerp(from.Head, to.Head, t),
@@ -599,9 +757,45 @@ namespace ASAD_Multiplyer.PlayerController
             };
         }
 
+        private Vector3 HermitePosition(Vector3 startPosition, Vector3 startTangent, Vector3 endPosition, Vector3 endTangent, float t)
+        {
+            float t2 = t * t;
+            float t3 = t2 * t;
+            Vector3 hermite = (2f * t3 - 3f * t2 + 1f) * startPosition
+                              + (t3 - 2f * t2 + t) * startTangent
+                              + (-2f * t3 + 3f * t2) * endPosition
+                              + (t3 - t2) * endTangent;
+
+            Vector3 linear = Vector3.Lerp(startPosition, endPosition, t);
+            return Vector3.Distance(hermite, linear) > 0.75f ? linear : hermite;
+        }
+
         private Quaternion GetValidRotation(Quaternion value, Quaternion fallback)
         {
             return notNan(value) && value != Quaternion.identity ? value : fallback;
+        }
+
+        private Quaternion GetFilteredBoneTarget(Quaternion value, Quaternion fallback)
+        {
+            Quaternion validRotation = GetValidRotation(value, fallback);
+            return Quaternion.Angle(validRotation, fallback) < _boneReceiveDeadZoneDegrees ? fallback : validRotation;
+        }
+
+        private Quaternion GetStableBoneRotation(Transform bone, ref Quaternion stableRotation)
+        {
+            Quaternion currentRotation = bone != null ? bone.localRotation : stableRotation;
+            if (!_hasStableBoneRotations || stableRotation == Quaternion.identity)
+            {
+                stableRotation = currentRotation;
+                return stableRotation;
+            }
+
+            if (Quaternion.Angle(stableRotation, currentRotation) >= _boneSendDeadZoneDegrees)
+            {
+                stableRotation = currentRotation;
+            }
+
+            return stableRotation;
         }
 
         void SyncBoneRotation()
