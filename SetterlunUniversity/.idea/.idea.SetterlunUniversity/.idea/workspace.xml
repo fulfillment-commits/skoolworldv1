@@ -6,10 +6,11 @@
   <component name="ChangeListManager">
     <list default="true" id="f976adce-1e4f-45bd-bef2-f7c88739f689" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/.idea.SetterlunUniversity/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.SetterlunUniversity/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/ASAD_Multiplayer/NetworkScripts/PUN_NetworkManager.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/ASAD_Multiplayer/NetworkScripts/PUN_NetworkManager.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/ASAD_Multiplayer/PlayerController/Resources/vBasicController_BSMC_CharacterBase.prefab" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/ASAD_Multiplayer/PlayerController/Resources/vBasicController_BSMC_CharacterBase.prefab" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Assets/ASAD_Multiplayer/PlayerController/Scripts/PUN_SyncPlayer.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/ASAD_Multiplayer/PlayerController/Scripts/PUN_SyncPlayer.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Invector-3rdPersonController/Basic Locomotion/Scripts/CharacterController/vThirdPersonController.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Invector-3rdPersonController/Basic Locomotion/Scripts/CharacterController/vThirdPersonController.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Photon/PhotonUnityNetworking/Resources/PhotonServerSettings.asset" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Photon/PhotonUnityNetworking/Resources/PhotonServerSettings.asset" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Assets/Scenes/Onboarding.unity" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scenes/Onboarding.unity" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/UserSettings/Layouts/CurrentMaximizeLayout.dwlt" beforeDir="false" afterPath="$PROJECT_DIR$/UserSettings/Layouts/CurrentMaximizeLayout.dwlt" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -26,6 +27,7 @@
     <setting file="file://$PROJECT_DIR$/Assets/Scripts/Editor/OnEnableAssignComponentEditor.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Assets/Scripts/UI/QuestOptionChip.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Library/PackageCache/com.unity.ugui@1.0.0/Runtime/UI/Core/Toggle.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://E:/PizzaReady/PizzaReady/Assets/MyAssets/Scripts/MyAdManager.cs" root0="SKIP_HIGHLIGHTING" />
   </component>
   <component name="ProjectColorInfo">{
   &quot;associatedIndex&quot;: 2

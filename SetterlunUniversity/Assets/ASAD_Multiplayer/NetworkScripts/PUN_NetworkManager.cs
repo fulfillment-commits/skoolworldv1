@@ -49,6 +49,8 @@ namespace ASAD_Multiplyer.Network
 
         public GameObject[] environments;
         public string _gameVersion = "1.0";
+        [Tooltip("Leave empty to let Photon use the app/dashboard region settings. Set only if your Photon app has that region enabled, for example us, eu, asia, in.")]
+        public string fixedRegion = "";
 
         [SerializeField]
         private byte maxPlayerPerRoom = 4;
@@ -99,6 +101,8 @@ namespace ASAD_Multiplyer.Network
             }
 
             PhotonNetwork.KeepAliveInBackground = 180;
+            PhotonNetwork.SendRate = 30;
+            PhotonNetwork.SerializationRate = 30;
             // PhotonNetwork.NetworkingClient.LoadBalancingPeer.DisconnectTimeout = 60000;
             PhotonNetwork.AutomaticallySyncScene =
                 _syncScenes;
@@ -191,7 +195,15 @@ namespace ASAD_Multiplyer.Network
             _connecting = true;
             _connectStatus = "Finding a room...";
             CustomDebug.Log("Connecting... " +PhotonNetwork.IsConnected);
-            PhotonNetwork.PhotonServerSettings.AppSettings.FixedRegion = "us";
+            if (string.IsNullOrWhiteSpace(fixedRegion))
+            {
+                PhotonNetwork.PhotonServerSettings.AppSettings.FixedRegion = string.Empty;
+                ServerSettings.ResetBestRegionCodeInPreferences();
+            }
+            else
+            {
+                PhotonNetwork.PhotonServerSettings.AppSettings.FixedRegion = fixedRegion.Trim().ToLowerInvariant();
+            }
             if (PhotonNetwork.IsConnected)
             {
                 PhotonNetwork.JoinRandomRoom();
@@ -267,8 +279,10 @@ namespace ASAD_Multiplyer.Network
         {
             _connecting = false;
             _connectStatus = "Disconnected: " + cause;
-            lastPosition = myPlayer.transform.position;
-            PhotonNetwork.DestroyPlayerObjects(myPlayer.GetComponent<PhotonView>().ViewID, myPlayer);
+            if (myPlayer != null)
+            {
+                lastPosition = myPlayer.transform.position;
+            }
             // if ( cause == DisconnectCause.ClientTimeout ||
             //     cause == DisconnectCause.ServerTimeout || cause == DisconnectCause.DisconnectByServerLogic)
             // {
@@ -393,7 +407,11 @@ namespace ASAD_Multiplyer.Network
         public override void OnLeftRoom()
         {
             _onLeftRoom.Invoke();
-            PhotonNetwork.DestroyPlayerObjects(myPlayer.GetComponent<PhotonView>().ViewID, myPlayer);
+            if (myPlayer != null)
+            {
+                Destroy(myPlayer);
+                myPlayer = null;
+            }
             base.OnLeftRoom();
         }
 

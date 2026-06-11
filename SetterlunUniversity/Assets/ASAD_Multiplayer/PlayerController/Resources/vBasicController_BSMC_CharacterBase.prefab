@@ -192,9 +192,7 @@ GameObject:
   - component: {fileID: 5574563784635012492}
   - component: {fileID: 5285271074892065377}
   - component: {fileID: 7764306146306503308}
-  - component: {fileID: 1176380581171376686}
   - component: {fileID: 905232305167481776}
-  - component: {fileID: 5679514867315185944}
   - component: {fileID: 4538598561082478988}
   - component: {fileID: 34917808343204673}
   m_Layer: 8
@@ -673,7 +671,7 @@ Rigidbody:
   m_ImplicitTensor: 1
   m_UseGravity: 1
   m_IsKinematic: 0
-  m_Interpolate: 0
+  m_Interpolate: 1
   m_Constraints: 112
   m_CollisionDetection: 3
 --- !u!136 &2727778980196686583
@@ -1010,29 +1008,11 @@ MonoBehaviour:
   OwnershipTransfer: 0
   observableSearch: 2
   ObservedComponents:
-  - {fileID: 1176380581171376686}
   - {fileID: 905232305167481776}
-  - {fileID: 5679514867315185944}
   - {fileID: 4538598561082478988}
   sceneViewId: 0
   InstantiationId: 0
   isRuntimeInstantiated: 0
---- !u!114 &1176380581171376686
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7570817845183890102}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 627855c7f81362d41938ffe0b1475957, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_SynchronizePosition: 1
-  m_SynchronizeRotation: 1
-  m_SynchronizeScale: 0
-  m_UseLocal: 1
 --- !u!114 &905232305167481776
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1121,22 +1101,6 @@ MonoBehaviour:
     LayerIndex: 4
   - SynchronizeType: 2
     LayerIndex: 5
---- !u!114 &5679514867315185944
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7570817845183890102}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 64179f3720bbfe947b7724caa67b7c1d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_SynchronizeVelocity: 1
-  m_SynchronizeAngularVelocity: 1
-  m_TeleportEnabled: 0
-  m_TeleportIfDistanceGreaterThan: 3
 --- !u!114 &4538598561082478988
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1158,7 +1122,10 @@ MonoBehaviour:
   animator: {fileID: 0}
   characterOutfit: {fileID: 8882225952363404411}
   _syncBones: 1
-  _boneLerpRate: 90
+  _boneLerpRate: 18
+  _networkInterpolationBackTime: 0.12
+  _networkExtrapolateLimit: 0.08
+  _networkTeleportDistance: 5
   sit: 0
   sitting: {fileID: 0}
 --- !u!114 &34917808343204673

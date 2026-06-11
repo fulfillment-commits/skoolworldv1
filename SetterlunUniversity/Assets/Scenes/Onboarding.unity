@@ -15790,6 +15790,7 @@ MonoBehaviour:
   cam: {fileID: 0}
   environments: []
   _gameVersion: 1.0
+  fixedRegion: 
   maxPlayerPerRoom: 20
   playerPrefab:
   - {fileID: 7570817845183890102, guid: 803a00bd0d85d41429057fa1d7442385, type: 3}
@@ -115190,7 +115191,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3143579534140223392, guid: 94403ba9d0c9ff842bc501989dfefa57, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 3584031354933948135, guid: 94403ba9d0c9ff842bc501989dfefa57, type: 3}
       propertyPath: m_Pivot.x
