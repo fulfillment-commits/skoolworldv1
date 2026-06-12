@@ -168,6 +168,27 @@ public class LocalDemoBackendImplementation : MonoBehaviour, IBackendService
         onSuccess?.Invoke(data);
     }
 
+    public void FirestoreGetCollection(string path, Action<string> onSuccess, Action<string> onError)
+    {
+        Debug.Log($"[LocalDemo] Firestore GetCollection: {path}");
+        onSuccess?.Invoke(CreateEmptyCollectionJson(path, path));
+    }
+
+    public void FirestoreGetCollectionOrdered(string path, string orderByField, bool descending, int limit, Action<string> onSuccess, Action<string> onError)
+    {
+        Debug.Log($"[LocalDemo] Firestore GetCollectionOrdered: {path}");
+        onSuccess?.Invoke(CreateEmptyCollectionJson(path, $"{path}|{orderByField}|{(descending ? "desc" : "asc")}|{limit}"));
+    }
+
+    private static string CreateEmptyCollectionJson(string path, string requestKey)
+    {
+        return JsonUtility.ToJson(new FirestoreCollectionResponse {
+            path = path,
+            requestKey = requestKey,
+            items = new FirestoreCollectionItem[0]
+        });
+    }
+
     public void CreateBrick(string userId, string name, string company, string message, Action<bool, string> callback)
     {
         var data = new { user_id = userId, name_on_brick = name, business_name = company, message = message };

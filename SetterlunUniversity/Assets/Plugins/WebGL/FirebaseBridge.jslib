@@ -137,7 +137,12 @@ var FirebaseBridge = {
                 setTimeout(function() { SendMessage(FirebaseState.callbackObj, "OnFirebaseGenericSuccess", pathStr); }, 0);
             })
             .catch(function(error) {
-                setTimeout(function() { SendMessage(FirebaseState.callbackObj, "OnFirebaseError", error.message); }, 0);
+                setTimeout(function() {
+                    SendMessage(FirebaseState.callbackObj, "OnFirebaseGenericError", JSON.stringify({
+                        path: pathStr,
+                        message: error.message
+                    }));
+                }, 0);
             });
     },
 
@@ -158,7 +163,12 @@ var FirebaseBridge = {
                 setTimeout(function() { SendMessage(FirebaseState.callbackObj, "OnFirebaseGenericSuccess", pathStr); }, 0);
             })
             .catch(function(error) {
-                setTimeout(function() { SendMessage(FirebaseState.callbackObj, "OnFirebaseError", error.message); }, 0);
+                setTimeout(function() {
+                    SendMessage(FirebaseState.callbackObj, "OnFirebaseGenericError", JSON.stringify({
+                        path: pathStr,
+                        message: error.message
+                    }));
+                }, 0);
             });
     },
 
@@ -221,6 +231,51 @@ var FirebaseBridge = {
                 setTimeout(function() {
                     SendMessage(FirebaseState.callbackObj, "OnFirebaseCollectionSuccess", JSON.stringify({
                         path: pathStr,
+                        requestKey: pathStr,
+                        items: results
+                    }));
+                }, 0);
+            })
+            .catch(function(error) {
+                setTimeout(function() { SendMessage(FirebaseState.callbackObj, "OnFirebaseError", error.message); }, 0);
+            });
+    },
+
+    Firebase_Firestore_GetCollectionOrdered: function(path, orderByField, descending, limit) {
+        if (!FirebaseState.db) return;
+        var pathStr = UTF8ToString(path);
+        var orderFieldStr = UTF8ToString(orderByField);
+        var direction = descending ? "desc" : "asc";
+        var safeLimit = Math.max(1, Math.min(limit || 50, 100));
+        var requestKey = pathStr + "|" + orderFieldStr + "|" + direction + "|" + safeLimit;
+
+        var parts = pathStr.split('/');
+        var ref = FirebaseState.db;
+        for (var i = 0; i < parts.length; i++) {
+            if (i % 2 === 0) ref = ref.collection(parts[i]);
+            else ref = ref.doc(parts[i]);
+        }
+
+        // Ensure we ended on a collection
+        if (parts.length % 2 === 0) {
+            console.error("âŒ [Firebase Bridge] GetCollectionOrdered requires a path to a collection, not a document: " + pathStr);
+            return;
+        }
+
+        ref.orderBy(orderFieldStr, direction).limit(safeLimit).get()
+            .then(function(querySnapshot) {
+                var results = [];
+                querySnapshot.forEach(function(doc) {
+                    results.push({
+                        id: doc.id,
+                        data: JSON.stringify(doc.data())
+                    });
+                });
+
+                setTimeout(function() {
+                    SendMessage(FirebaseState.callbackObj, "OnFirebaseCollectionSuccess", JSON.stringify({
+                        path: pathStr,
+                        requestKey: requestKey,
                         items: results
                     }));
                 }, 0);

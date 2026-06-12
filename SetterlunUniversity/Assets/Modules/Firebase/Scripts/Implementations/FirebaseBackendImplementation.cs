@@ -19,6 +19,8 @@ public class FirebaseBackendImplementation : MonoBehaviour, IBackendService
     private static extern void Firebase_Firestore_Get(string path);
     [DllImport("__Internal")]
     private static extern void Firebase_Firestore_GetCollection(string path);
+    [DllImport("__Internal")]
+    private static extern void Firebase_Firestore_GetCollectionOrdered(string path, string orderByField, int descending, int limit);
 
     private Action<BackendResponse> loginSuccess;
     private Action<BackendResponse> registerSuccess;
@@ -27,6 +29,7 @@ public class FirebaseBackendImplementation : MonoBehaviour, IBackendService
     // Support for multiple concurrent Firestore requests
     private Dictionary<string, Action<bool, string>> pendingGenericCallbacks = new Dictionary<string, Action<bool, string>>();
     private Dictionary<string, Action<string>> pendingDataCallbacks = new Dictionary<string, Action<string>>();
+    private Dictionary<string, Action<string>> pendingCollectionCallbacks = new Dictionary<string, Action<string>>();
     private Dictionary<string, Action<QuestProgressData[]>> pendingQuestCallbacks = new Dictionary<string, Action<QuestProgressData[]>>();
 
     private string currentUserId = "";
@@ -75,6 +78,33 @@ public class FirebaseBackendImplementation : MonoBehaviour, IBackendService
         Firebase_Firestore_Get(path);
         #else
         onSuccess?.Invoke("{}");
+        #endif
+    }
+
+    public void FirestoreGetCollection(string path, Action<string> onSuccess, Action<string> onError)
+    {
+        string requestKey = path;
+        pendingCollectionCallbacks[requestKey] = onSuccess;
+        currentError = onError;
+
+        #if !UNITY_EDITOR && UNITY_WEBGL
+        Firebase_Firestore_GetCollection(path);
+        #else
+        onSuccess?.Invoke(CreateEmptyCollectionJson(path, requestKey));
+        #endif
+    }
+
+    public void FirestoreGetCollectionOrdered(string path, string orderByField, bool descending, int limit, Action<string> onSuccess, Action<string> onError)
+    {
+        int safeLimit = Mathf.Clamp(limit, 1, 100);
+        string requestKey = BuildCollectionRequestKey(path, orderByField, descending, safeLimit);
+        pendingCollectionCallbacks[requestKey] = onSuccess;
+        currentError = onError;
+
+        #if !UNITY_EDITOR && UNITY_WEBGL
+        Firebase_Firestore_GetCollectionOrdered(path, orderByField, descending ? 1 : 0, safeLimit);
+        #else
+        onSuccess?.Invoke(CreateEmptyCollectionJson(path, requestKey));
         #endif
     }
 
@@ -142,19 +172,35 @@ public class FirebaseBackendImplementation : MonoBehaviour, IBackendService
         try
         {
             var response = JsonUtility.FromJson<CollectionResponse>(json);
-            if (response != null && pendingQuestCallbacks.TryGetValue(response.path, out var callback))
+            if (response == null)
+            {
+                return;
+            }
+
+            string requestKey = string.IsNullOrEmpty(response.requestKey) ? response.path : response.requestKey;
+            if (response != null && pendingCollectionCallbacks.TryGetValue(requestKey, out var collectionCallback))
+            {
+                collectionCallback?.Invoke(json);
+                pendingCollectionCallbacks.Remove(requestKey);
+                return;
+            }
+
+            if (pendingQuestCallbacks.TryGetValue(response.path, out var callback))
             {
                 List<QuestProgressData> progress = new List<QuestProgressData>();
-                foreach (var item in response.items)
+                if (response.items != null)
                 {
-                    // Parse the internal quest data from the stringified JSON
-                    var questData = JsonUtility.FromJson<QuestSaveData>(item.data);
-                    
-                    progress.Add(new QuestProgressData {
-                        questNumber = int.Parse(item.id),
-                        completed = questData.completed,
-                        dataJson = questData.data_json
-                    });
+                    foreach (var item in response.items)
+                    {
+                        // Parse the internal quest data from the stringified JSON
+                        var questData = JsonUtility.FromJson<QuestSaveData>(item.data);
+
+                        progress.Add(new QuestProgressData {
+                            questNumber = int.Parse(item.id),
+                            completed = questData.completed,
+                            dataJson = questData.data_json
+                        });
+                    }
                 }
                 
                 callback?.Invoke(progress.ToArray());
@@ -168,9 +214,23 @@ public class FirebaseBackendImplementation : MonoBehaviour, IBackendService
     }
 
     [Serializable]
-    private class CollectionResponse { public string path; public CollectionItem[] items; }
+    private class CollectionResponse { public string path; public string requestKey; public CollectionItem[] items; }
     [Serializable]
     private class CollectionItem { public string id; public string data; }
+
+    private static string BuildCollectionRequestKey(string path, string orderByField, bool descending, int limit)
+    {
+        return $"{path}|{orderByField}|{(descending ? "desc" : "asc")}|{limit}";
+    }
+
+    private static string CreateEmptyCollectionJson(string path, string requestKey)
+    {
+        return JsonUtility.ToJson(new CollectionResponse {
+            path = path,
+            requestKey = requestKey,
+            items = new CollectionItem[0]
+        });
+    }
 
     // ====================== User Data (Implemented via Generic Firestore) ======================
     public void UpdateAvatar(string userId, int avatarIndex, Action<bool> onComplete)
@@ -217,6 +277,27 @@ public class FirebaseBackendImplementation : MonoBehaviour, IBackendService
         }
     }
 
+    public void OnFirebaseGenericError(string json)
+    {
+        try
+        {
+            var wrapper = JsonUtility.FromJson<GenericErrorWrapper>(json);
+            if (wrapper != null && pendingGenericCallbacks.TryGetValue(wrapper.path, out var callback))
+            {
+                callback?.Invoke(false, wrapper.message);
+                pendingGenericCallbacks.Remove(wrapper.path);
+                return;
+            }
+
+            currentError?.Invoke(wrapper != null ? wrapper.message : json);
+        }
+        catch (Exception e)
+        {
+            Debug.LogError($"[FirebaseBackend] Generic Error Parse Error: {e.Message}");
+            currentError?.Invoke(json);
+        }
+    }
+
     public void OnFirebaseGenericDataSuccess(string json)
     {
         try {
@@ -240,6 +321,9 @@ public class FirebaseBackendImplementation : MonoBehaviour, IBackendService
 
     [Serializable]
     private class GenericDataWrapper { public string path; public string data; }
+
+    [Serializable]
+    private class GenericErrorWrapper { public string path; public string message; }
 
     public void OnFirebaseLoginSuccess(string json)
     {

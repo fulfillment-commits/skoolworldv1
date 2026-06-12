@@ -6,6 +6,8 @@ public interface IBackendService
     void FirestoreSet(string path, string json, Action<bool, string> callback);
     void FirestoreUpdate(string path, string json, Action<bool, string> callback);
     void FirestoreGet(string path, Action<string> onSuccess, Action<string> onError);
+    void FirestoreGetCollection(string path, Action<string> onSuccess, Action<string> onError);
+    void FirestoreGetCollectionOrdered(string path, string orderByField, bool descending, int limit, Action<string> onSuccess, Action<string> onError);
     
     // Auth
     void SetUserId(string userId);
@@ -54,4 +56,19 @@ public class QuestProgressData
     public int questNumber;
     public bool completed;
     public string dataJson;
+}
+
+[Serializable]
+public class FirestoreCollectionResponse
+{
+    public string path;
+    public string requestKey;
+    public FirestoreCollectionItem[] items;
+}
+
+[Serializable]
+public class FirestoreCollectionItem
+{
+    public string id;
+    public string data;
 }

@@ -19,6 +19,25 @@ public class CustomAPIBackendImplementation : MonoBehaviour, IBackendService
         onSuccess?.Invoke("{}");
     }
 
+    public void FirestoreGetCollection(string path, Action<string> onSuccess, Action<string> onError)
+    {
+        onSuccess?.Invoke(CreateEmptyCollectionJson(path, path));
+    }
+
+    public void FirestoreGetCollectionOrdered(string path, string orderByField, bool descending, int limit, Action<string> onSuccess, Action<string> onError)
+    {
+        onSuccess?.Invoke(CreateEmptyCollectionJson(path, $"{path}|{orderByField}|{(descending ? "desc" : "asc")}|{limit}"));
+    }
+
+    private static string CreateEmptyCollectionJson(string path, string requestKey)
+    {
+        return JsonUtility.ToJson(new FirestoreCollectionResponse {
+            path = path,
+            requestKey = requestKey,
+            items = new FirestoreCollectionItem[0]
+        });
+    }
+
     public void SetUserId(string userId)
     {
         // Custom API uses UserAPI instance directly or handles it internally
