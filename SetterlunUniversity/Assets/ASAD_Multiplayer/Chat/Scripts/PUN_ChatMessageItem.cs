@@ -47,11 +47,12 @@ namespace ASAD_Multiplyer.Chat
             string sender = message != null && !string.IsNullOrWhiteSpace(message.senderDisplayName)
                 ? message.senderDisplayName.Trim()
                 : "User";
+            string text = message != null ? message.text : "";
 
             if (messageText != null)
             {
-                string text = message != null ? message.text : "";
-                messageText.text = $"{sender}: {text}";
+                messageText.richText = true;
+                messageText.text = $"<b><color=#3E63BC>@{EscapeRichText(sender)}</color></b> {EscapeRichText(text)}";
                 messageText.color = new Color32(28, 33, 45, 255);
             }
 
@@ -86,6 +87,19 @@ namespace ASAD_Multiplyer.Chat
             }
 
             return "";
+        }
+
+        private static string EscapeRichText(string value)
+        {
+            if (string.IsNullOrEmpty(value))
+            {
+                return "";
+            }
+
+            return value
+                .Replace("&", "&amp;")
+                .Replace("<", "&lt;")
+                .Replace(">", "&gt;");
         }
     }
 }
