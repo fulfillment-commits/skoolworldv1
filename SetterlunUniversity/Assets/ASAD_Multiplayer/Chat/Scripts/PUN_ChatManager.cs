@@ -35,6 +35,8 @@ namespace ASAD_Multiplyer.Chat
         [SerializeField] private Transform userListContent;
         [SerializeField] private TextMeshProUGUI userListStatusText;
         [SerializeField] private PUN_ChatListItem userListItemPrefab;
+        [SerializeField] private Button userChatTabButton;
+        [SerializeField] private Button publicChatTabButton;
 
         [Header("Chat Panel")]
         [SerializeField] private GameObject chatPanel;
@@ -53,6 +55,9 @@ namespace ASAD_Multiplyer.Chat
         private readonly HashSet<string> unreadUserIds = new HashSet<string>();
         private readonly HashSet<string> unreadRequestsInFlight = new HashSet<string>();
         private readonly HashSet<string> renderedMessageIds = new HashSet<string>();
+        private enum ChatMode { Private, Public }
+
+        private ChatMode activeChatMode = ChatMode.Private;
         private Player activePlayer;
         private string activeUserId = "";
         private string activeDisplayName = "";
@@ -85,12 +90,13 @@ namespace ASAD_Multiplyer.Chat
             Instance = this;
             DontDestroyOnLoad(gameObject);
 
-            if (autoBuildUiIfMissing && (canvas == null || generatedUiVersion < PUN_ChatRuntimeUiBuilder.CurrentVersion))
+            if (autoBuildUiIfMissing && canvas == null)
             {
                 PUN_ChatRuntimeUiBuilder.Build(this);
             }
 
             BindButtons();
+            EnsurePublicChatUiExtensions();
             SetJoinedUiVisible(false);
             SetUserListVisible(false);
             SetChatVisible(false);
@@ -186,6 +192,7 @@ namespace ASAD_Multiplyer.Chat
             {
                 StopRefreshRoutine();
                 SetChatVisible(false);
+                activeChatMode = ChatMode.Private;
                 activePlayer = null;
                 activeUserId = "";
                 activeDisplayName = "";
@@ -194,8 +201,42 @@ namespace ASAD_Multiplyer.Chat
             SetUserListVisible(show);
             if (show)
             {
+                SetActiveTab(ChatMode.Private);
                 RefreshUserList();
             }
+        }
+
+        public void OpenPublicChat()
+        {
+            if (!IsLocalPlayerReady())
+            {
+                return;
+            }
+
+            activeChatMode = ChatMode.Public;
+            activePlayer = null;
+            activeDisplayName = "All Chat";
+            activeUserId = FirestoreChatService.PublicChatId;
+            renderedMessageIds.Clear();
+            ClearMessages();
+
+            SetActiveTab(ChatMode.Public);
+            SetChatVisible(true);
+            SetUserListVisible(false);
+
+            if (chatHeaderText != null)
+            {
+                chatHeaderText.text = "All Chat";
+            }
+
+            if (chatHeaderAvatarText != null)
+            {
+                chatHeaderAvatarText.text = "#";
+            }
+
+            SetStatus("Loading public messages...");
+            LoadActiveMessages(true);
+            RestartRefreshRoutine();
         }
 
         public void OpenChat(PUN_ChatListItem item)
@@ -216,6 +257,7 @@ namespace ASAD_Multiplyer.Chat
                 return;
             }
 
+            activeChatMode = ChatMode.Private;
             activePlayer = player;
             activeDisplayName = string.IsNullOrWhiteSpace(displayName) ? "User" : displayName.Trim();
             activeUserId = userId.Trim();
@@ -252,6 +294,7 @@ namespace ASAD_Multiplyer.Chat
             if (IsLocalPlayerReady())
             {
                 SetUserListVisible(true);
+                SetActiveTab(ChatMode.Private);
                 RefreshUserList();
             }
         }
@@ -275,7 +318,7 @@ namespace ASAD_Multiplyer.Chat
                 return;
             }
 
-            if (string.IsNullOrEmpty(activeUserId))
+            if (activeChatMode == ChatMode.Private && string.IsNullOrEmpty(activeUserId))
             {
                 SetStatus("Select a user first.");
                 return;
@@ -288,24 +331,26 @@ namespace ASAD_Multiplyer.Chat
             string messageText = text.Trim();
             messageInput.text = "";
 
-            FirestoreChatService.SendMessage(
-                myUserId,
-                activeUserId,
-                messageText,
-                _ => {
-                    isSendingMessage = false;
-                    SetSendInteractable(true);
-                    SetStatus("");
-                    LoadActiveMessages(true);
-                },
-                error => {
-                    isSendingMessage = false;
-                    SetSendInteractable(true);
-                    messageInput.text = messageText;
-                    SetStatus(error);
-                },
-                myDisplayName,
-                activeDisplayName);
+            if (activeChatMode == ChatMode.Public)
+            {
+                FirestoreChatService.SendPublicMessage(
+                    myUserId,
+                    myDisplayName,
+                    messageText,
+                    _ => HandleMessageSent(),
+                    error => HandleMessageSendFailed(error, messageText));
+            }
+            else
+            {
+                FirestoreChatService.SendMessage(
+                    myUserId,
+                    activeUserId,
+                    messageText,
+                    _ => HandleMessageSent(),
+                    error => HandleMessageSendFailed(error, messageText),
+                    myDisplayName,
+                    activeDisplayName);
+            }
         }
 
         public override void OnJoinedRoom()
@@ -364,6 +409,176 @@ namespace ASAD_Multiplyer.Chat
                 closeChatButton.onClick.RemoveListener(CloseChat);
                 closeChatButton.onClick.AddListener(CloseChat);
             }
+
+            if (userChatTabButton != null)
+            {
+                userChatTabButton.onClick.RemoveListener(ShowPrivateUserTab);
+                userChatTabButton.onClick.AddListener(ShowPrivateUserTab);
+            }
+
+            if (publicChatTabButton != null)
+            {
+                publicChatTabButton.onClick.RemoveListener(OpenPublicChat);
+                publicChatTabButton.onClick.AddListener(OpenPublicChat);
+            }
+        }
+
+        private void HandleMessageSent()
+        {
+            isSendingMessage = false;
+            SetSendInteractable(true);
+            SetStatus("");
+            LoadActiveMessages(true);
+        }
+
+        private void HandleMessageSendFailed(string error, string originalMessage)
+        {
+            isSendingMessage = false;
+            SetSendInteractable(true);
+            if (messageInput != null)
+            {
+                messageInput.text = originalMessage;
+            }
+
+            SetStatus(error);
+        }
+
+        private void ShowPrivateUserTab()
+        {
+            activeChatMode = ChatMode.Private;
+            StopRefreshRoutine();
+            SetChatVisible(false);
+            SetUserListVisible(true);
+            SetActiveTab(ChatMode.Private);
+            RefreshUserList();
+        }
+
+        private void SetActiveTab(ChatMode mode)
+        {
+            SetTabVisual(userChatTabButton, mode == ChatMode.Private);
+            SetTabVisual(publicChatTabButton, mode == ChatMode.Public);
+        }
+
+        private static void SetTabVisual(Button button, bool active)
+        {
+            if (button == null)
+            {
+                return;
+            }
+
+            Image image = button.GetComponent<Image>();
+            if (image != null)
+            {
+                image.color = active ? new Color32(36, 51, 88, 255) : new Color32(36, 51, 88, 115);
+            }
+
+            TextMeshProUGUI label = button.GetComponentInChildren<TextMeshProUGUI>(true);
+            if (label != null)
+            {
+                label.color = Color.white;// : new Color32(24, 29, 39, 255);
+            }
+        }
+
+        private void EnsurePublicChatUiExtensions()
+        {
+            if (userListPanel == null)
+            {
+                return;
+            }
+
+            if (userChatTabButton != null && publicChatTabButton != null)
+            {
+                BindButtons();
+                SetActiveTab(activeChatMode);
+                return;
+            }
+
+            Transform existingTabs = userListPanel.transform.Find("PUN_ChatModeTabs_Runtime");
+            if (existingTabs != null)
+            {
+                AssignTabButtons(existingTabs);
+                BindButtons();
+                SetActiveTab(activeChatMode);
+                return;
+            }
+
+            GameObject tabsObject = new GameObject("PUN_ChatModeTabs_Runtime", typeof(RectTransform), typeof(CanvasRenderer), typeof(Image));
+            tabsObject.transform.SetParent(userListPanel.transform, false);
+            RectTransform tabsRect = tabsObject.GetComponent<RectTransform>();
+            tabsRect.anchorMin = new Vector2(0f, 1f);
+            tabsRect.anchorMax = new Vector2(1f, 1f);
+            tabsRect.pivot = new Vector2(0.5f, 1f);
+            tabsRect.anchoredPosition = new Vector2(0f, -116f);
+            tabsRect.sizeDelta = new Vector2(-32f, 36f);
+
+            Image tabsBg = tabsObject.GetComponent<Image>();
+            tabsBg.color = new Color32(235, 239, 246, 230);
+
+            userChatTabButton = CreateRuntimeTabButton(tabsObject.transform, "UserChatTab", "User Chat", new Vector2(0f, 0f), new Vector2(0f, 0f), new Vector2(0.5f, 1f));
+            publicChatTabButton = CreateRuntimeTabButton(tabsObject.transform, "AllChatTab", "All Chat", new Vector2(0f, 0f), new Vector2(0.5f, 0f), new Vector2(1f, 1f));
+
+            BindButtons();
+            SetActiveTab(ChatMode.Private);
+        }
+
+        private void AssignTabButtons(Transform tabsRoot)
+        {
+            if (userChatTabButton == null)
+            {
+                Transform privateTab = tabsRoot.Find("UserChatTab");
+                if (privateTab != null)
+                {
+                    userChatTabButton = privateTab.GetComponent<Button>();
+                }
+            }
+
+            if (publicChatTabButton == null)
+            {
+                Transform publicTab = tabsRoot.Find("AllChatTab");
+                if (publicTab != null)
+                {
+                    publicChatTabButton = publicTab.GetComponent<Button>();
+                }
+            }
+        }
+
+        private static Button CreateRuntimeTabButton(Transform parent, string name, string label, Vector2 offset, Vector2 anchorMin, Vector2 anchorMax)
+        {
+            GameObject obj = new GameObject(name, typeof(RectTransform), typeof(CanvasRenderer), typeof(Image), typeof(Button));
+            obj.transform.SetParent(parent, false);
+
+            RectTransform rect = obj.GetComponent<RectTransform>();
+            rect.anchorMin = anchorMin;
+            rect.anchorMax = anchorMax;
+            rect.pivot = new Vector2(0.5f, 0.5f);
+            rect.offsetMin = new Vector2(4f, 4f);
+            rect.offsetMax = new Vector2(-4f, -4f);
+            rect.anchoredPosition += offset;
+
+            Image image = obj.GetComponent<Image>();
+            image.color = new Color32(235, 239, 246, 255);
+
+            Button button = obj.GetComponent<Button>();
+            button.navigation = new Navigation { mode = Navigation.Mode.None };
+
+            GameObject textObject = new GameObject("Label", typeof(RectTransform), typeof(CanvasRenderer), typeof(TextMeshProUGUI));
+            textObject.transform.SetParent(obj.transform, false);
+            RectTransform textRect = textObject.GetComponent<RectTransform>();
+            textRect.anchorMin = Vector2.zero;
+            textRect.anchorMax = Vector2.one;
+            textRect.offsetMin = new Vector2(6f, 2f);
+            textRect.offsetMax = new Vector2(-6f, -2f);
+
+            TextMeshProUGUI text = textObject.GetComponent<TextMeshProUGUI>();
+            text.text = label;
+            text.fontSize = 13;
+            text.fontStyle = FontStyles.Bold;
+            text.color = new Color32(24, 29, 39, 255);
+            text.alignment = TextAlignmentOptions.Center;
+            text.enableWordWrapping = false;
+            text.overflowMode = TextOverflowModes.Ellipsis;
+
+            return button;
         }
 
         private void RefreshVisibility()
@@ -613,6 +828,26 @@ namespace ASAD_Multiplyer.Chat
             }
 
             isLoadingMessages = true;
+            if (activeChatMode == ChatMode.Public)
+            {
+                FirestoreChatService.LoadRecentPublicMessages(
+                    messages => {
+                        isLoadingMessages = false;
+                        RenderMessages(messages, myUserId);
+                        SetStatus("");
+                        if (scrollToBottom)
+                        {
+                            StartCoroutine(ScrollToBottomNextFrame());
+                        }
+                    },
+                    error => {
+                        isLoadingMessages = false;
+                        SetStatus(error);
+                    },
+                    messageLoadLimit);
+                return;
+            }
+
             FirestoreChatService.LoadRecentMessages(
                 myUserId,
                 activeUserId,
@@ -651,7 +886,9 @@ namespace ASAD_Multiplyer.Chat
                 }
 
                 bool isMine = message.senderId == myUserId;
-                PUN_ChatMessageItem prefab = isMine ? outgoingMessagePrefab : incomingMessagePrefab;
+                PUN_ChatMessageItem prefab = activeChatMode == ChatMode.Public
+                    ? incomingMessagePrefab
+                    : isMine ? outgoingMessagePrefab : incomingMessagePrefab;
                 if (prefab == null || messagesContent == null)
                 {
                     continue;
@@ -659,7 +896,14 @@ namespace ASAD_Multiplyer.Chat
 
                 PUN_ChatMessageItem item = Instantiate(prefab, messagesContent);
                 item.gameObject.SetActive(true);
-                item.Bind(message, isMine);
+                if (activeChatMode == ChatMode.Public)
+                {
+                    item.BindPublic(message, isMine);
+                }
+                else
+                {
+                    item.Bind(message, isMine);
+                }
 
                 if (!string.IsNullOrEmpty(message.id))
                 {

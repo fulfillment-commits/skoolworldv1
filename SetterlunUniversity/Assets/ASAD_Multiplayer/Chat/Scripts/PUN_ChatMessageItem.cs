@@ -42,6 +42,37 @@ namespace ASAD_Multiplyer.Chat
             }
         }
 
+        public void BindPublic(ChatMessageData message, bool isMine)
+        {
+            string sender = message != null && !string.IsNullOrWhiteSpace(message.senderDisplayName)
+                ? message.senderDisplayName.Trim()
+                : "User";
+
+            if (messageText != null)
+            {
+                string text = message != null ? message.text : "";
+                messageText.text = $"{sender}: {text}";
+                messageText.color = new Color32(28, 33, 45, 255);
+            }
+
+            if (metaText != null)
+            {
+                string time = message != null ? FormatTime(message.clientCreatedAt) : "";
+                metaText.text = isMine
+                    ? string.IsNullOrEmpty(time) ? "You" : $"You  {time}"
+                    : time;
+                metaText.color = new Color32(102, 112, 133, 230);
+                metaText.alignment = TextAlignmentOptions.MidlineLeft;
+            }
+
+            if (bubbleImage != null)
+            {
+                bubbleImage.color = isMine
+                    ? new Color32(224, 233, 255, 255)
+                    : new Color32(239, 242, 247, 255);
+            }
+        }
+
         private static string FormatTime(string timestamp)
         {
             if (string.IsNullOrEmpty(timestamp))

@@ -8,6 +8,8 @@ public static class FirestoreChatService
     public const int DefaultMessageLimit = 50;
     public const int DefaultChatIndexLimit = 30;
     public const int MaxMessageLength = 1000;
+    public const string PublicChatId = "global";
+    private const string PublicReceiverId = "public";
 
     public static string GetChatId(string uidA, string uidB)
     {
@@ -32,6 +34,21 @@ public static class FirestoreChatService
     public static string GetChatIndexPath(string userId, string chatId)
     {
         return $"users/{ChatIdentityUtility.SanitizeFirestoreId(userId)}/chatIndex/{ChatIdentityUtility.SanitizeFirestoreId(chatId)}";
+    }
+
+    public static string GetPublicChatPath(string publicChatId = PublicChatId)
+    {
+        return $"publicChats/{ChatIdentityUtility.SanitizeFirestoreId(publicChatId)}";
+    }
+
+    public static string GetPublicMessagesPath(string publicChatId = PublicChatId)
+    {
+        return $"{GetPublicChatPath(publicChatId)}/messages";
+    }
+
+    public static string GetPublicMessagePath(string messageId, string publicChatId = PublicChatId)
+    {
+        return $"{GetPublicMessagesPath(publicChatId)}/{ChatIdentityUtility.SanitizeFirestoreId(messageId)}";
     }
 
     public static void CreateOrOpenChat(
@@ -305,6 +322,107 @@ public static class FirestoreChatService
         SendMessage(myUid, otherUid, text, onSuccess, onError, myDisplayName, otherDisplayName);
     }
 
+    public static void SendPublicMessage(
+        string myUid,
+        string myDisplayName,
+        string text,
+        Action<ChatMessageData> onSuccess,
+        Action<string> onError = null,
+        string publicChatId = PublicChatId)
+    {
+        if (string.IsNullOrWhiteSpace(myUid))
+        {
+            onError?.Invoke("Local Firebase UID is empty.");
+            return;
+        }
+
+        string cleanText = NormalizeMessage(text);
+        if (string.IsNullOrEmpty(cleanText))
+        {
+            onError?.Invoke("Message is empty.");
+            return;
+        }
+
+        if (cleanText.Length > MaxMessageLength)
+        {
+            onError?.Invoke($"Message is too long. Max length is {MaxMessageLength} characters.");
+            return;
+        }
+
+        string safePublicChatId = ChatIdentityUtility.SanitizeFirestoreId(publicChatId);
+        string now = UtcTimestamp();
+        string messageId = CreateMessageId(myUid);
+        ChatMessageData message = new ChatMessageData {
+            id = messageId,
+            chatId = safePublicChatId,
+            senderId = ChatIdentityUtility.SanitizeFirestoreId(myUid),
+            receiverId = PublicReceiverId,
+            senderDisplayName = string.IsNullOrWhiteSpace(myDisplayName) ? "User" : myDisplayName.Trim(),
+            text = cleanText,
+            clientCreatedAt = now,
+            status = "sent"
+        };
+
+        PublicChatThreadData thread = new PublicChatThreadData {
+            chatId = safePublicChatId,
+            title = "All Chat",
+            updatedAt = now,
+            lastMessage = cleanText,
+            lastMessageAt = now,
+            lastSenderId = ChatIdentityUtility.SanitizeFirestoreId(myUid),
+            lastSenderDisplayName = message.senderDisplayName
+        };
+
+        FirebaseManager.SetData(GetPublicChatPath(safePublicChatId), thread, (threadSaved, threadError) => {
+            if (!threadSaved)
+            {
+                onError?.Invoke(threadError);
+                return;
+            }
+
+            FirebaseManager.SetData(GetPublicMessagePath(message.id, safePublicChatId), message, (messageSaved, messageError) => {
+                if (!messageSaved)
+                {
+                    onError?.Invoke(messageError);
+                    return;
+                }
+
+                onSuccess?.Invoke(message);
+            });
+        });
+    }
+
+    public static void LoadRecentPublicMessages(
+        Action<ChatMessageData[]> onSuccess,
+        Action<string> onError = null,
+        int limit = DefaultMessageLimit,
+        string publicChatId = PublicChatId)
+    {
+        int safeLimit = Mathf.Clamp(limit, 1, DefaultMessageLimit);
+        string safePublicChatId = ChatIdentityUtility.SanitizeFirestoreId(publicChatId);
+
+        FirebaseManager.GetCollectionOrdered(GetPublicMessagesPath(safePublicChatId), "clientCreatedAt", true, safeLimit, response => {
+            List<ChatMessageData> messages = new List<ChatMessageData>();
+            if (response.items != null)
+            {
+                foreach (FirestoreCollectionItem item in response.items)
+                {
+                    if (string.IsNullOrEmpty(item.data))
+                    {
+                        continue;
+                    }
+
+                    ChatMessageData message = JsonUtility.FromJson<ChatMessageData>(item.data);
+                    message.id = item.id;
+                    messages.Add(message);
+                }
+            }
+
+            messages.Sort((a, b) => string.CompareOrdinal(a.clientCreatedAt, b.clientCreatedAt));
+            onSuccess?.Invoke(messages.ToArray());
+        }, onError);
+    }
+
     private static void UpdateChatIndexes(
         string myUid,
         string otherUid,
@@ -412,6 +530,18 @@ public class ChatThreadData
     public string lastMessage;
     public string lastMessageAt;
     public string lastSenderId;
+}
+
+[Serializable]
+public class PublicChatThreadData
+{
+    public string chatId;
+    public string title;
+    public string updatedAt;
+    public string lastMessage;
+    public string lastMessageAt;
+    public string lastSenderId;
+    public string lastSenderDisplayName;
 }
 
 [Serializable]

@@ -81,7 +81,7 @@ public class LoginScreen : ScreenBase
             {
                 return toggle;
             } 
-        }
+        } 
 
         return null;
     }
