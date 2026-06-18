@@ -11,8 +11,11 @@ public interface IBackendService
     
     // Auth
     void SetUserId(string userId);
+    void SetRememberMe(bool rememberMe);
+    void TryAutoLogin(Action<BackendResponse> onSuccess, Action<string> onError);
     void Login(string login, string password, Action<BackendResponse> onSuccess, Action<string> onError);
     void Register(UserData data, Action<BackendResponse> onSuccess, Action<string> onError);
+    void Logout();
 
     // Quests
     void CompleteQuest(int questNumber, string dataJson, Action<bool, string> callback);

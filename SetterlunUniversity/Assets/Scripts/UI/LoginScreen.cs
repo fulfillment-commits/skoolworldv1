@@ -11,6 +11,7 @@ public class LoginScreen : ScreenBase
 
     [Header("Password Toggle")]
     [SerializeField] private Toggle passwordToggle;
+    [SerializeField] private Toggle rememberMeToggle;
 
     [Header("Buttons")]
     [SerializeField] private Button loginButton;
@@ -21,6 +22,8 @@ public class LoginScreen : ScreenBase
     [SerializeField] private TextMeshProUGUI statusText;
 
     private bool isPasswordVisible = false;
+    private bool pendingRememberMe = true;
+    private const string PLAYERPREFS_REMEMBER_ME = "OnboardingRememberMe";
 
     protected override void OnShow()
     {
@@ -40,6 +43,7 @@ public class LoginScreen : ScreenBase
     private void Start()
     {
         SetupPasswordToggle();
+        SetupRememberMeToggle();
 
         loginButton.onClick.AddListener(OnLoginClicked);
         registerButton.onClick.AddListener(OnRegisterClicked);
@@ -53,6 +57,33 @@ public class LoginScreen : ScreenBase
             passwordToggle.onValueChanged.AddListener(OnPasswordToggleChanged);
             passwordToggle.isOn = false;
         }
+    }
+
+    private void SetupRememberMeToggle()
+    {
+        if (rememberMeToggle == null)
+        {
+            rememberMeToggle = FindRememberMeToggle();
+        }
+
+        if (rememberMeToggle != null)
+        {
+            rememberMeToggle.isOn = PlayerPrefs.GetInt(PLAYERPREFS_REMEMBER_ME, 1) == 1;
+        }
+    }
+
+    private Toggle FindRememberMeToggle()
+    {
+        Toggle[] toggles = GetComponentsInChildren<Toggle>(true);
+        foreach (Toggle toggle in toggles)
+        {
+            if (toggle != null && toggle != passwordToggle)
+            {
+                return toggle;
+            } 
+        }
+
+        return null;
     }
 
     private void OnPasswordToggleChanged(bool isVisible)
@@ -70,6 +101,8 @@ public class LoginScreen : ScreenBase
         if (!ValidateInputs()) return;
 
         ShowLoading("Logging in...");
+        pendingRememberMe = rememberMeToggle == null || rememberMeToggle.isOn;
+        BackendSettings.Instance.Service?.SetRememberMe(pendingRememberMe);
 
         BackendSettings.Instance.Service.Login(
             loginInput.text.Trim(),
@@ -91,6 +124,7 @@ public class LoginScreen : ScreenBase
 
             // Create Session
             OnboardingManager.Instance?.Initialize(response.userId, response.username, response.email);
+            OnboardingManager.Instance?.SetRememberMe(pendingRememberMe);
 
             Invoke(nameof(GoToNextScreen), 1.2f);
         }
@@ -179,6 +213,10 @@ public class LoginScreen : ScreenBase
         loginInput.text = "";
         passwordInput.text = "";
         passwordToggle.isOn = false;
+        if (rememberMeToggle != null)
+        {
+            rememberMeToggle.isOn = PlayerPrefs.GetInt(PLAYERPREFS_REMEMBER_ME, 1) == 1;
+        }
         ClearStatus();
     }
 }

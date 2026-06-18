@@ -15,6 +15,32 @@ public class LocalDemoBackendImplementation : MonoBehaviour, IBackendService
     [Serializable]
     private class LocalUserData { public string email; public string password; public string userId; public string username; }
 
+    public void SetRememberMe(bool rememberMe)
+    {
+    }
+
+    public void TryAutoLogin(Action<BackendResponse> onSuccess, Action<string> onError)
+    {
+        string userId = PlayerPrefs.GetString("OnboardingUserId_Str", "");
+        if (!string.IsNullOrEmpty(userId))
+        {
+            onSuccess?.Invoke(new BackendResponse {
+                userId = userId,
+                username = PlayerPrefs.GetString("OnboardingUsername", ""),
+                email = PlayerPrefs.GetString("OnboardingEmail", ""),
+                avatar_index = PlayerPrefs.GetInt("OnboardingAvatarIndex", 0),
+                message = "Local saved session"
+            });
+            return;
+        }
+
+        onError?.Invoke("No saved local session.");
+    }
+
+    public void Logout()
+    {
+    }
+
     public void Login(string login, string password, Action<BackendResponse> onSuccess, Action<string> onError)
     {
         Debug.Log($"🏠 [LocalDemo] Attempting Login: {login}");

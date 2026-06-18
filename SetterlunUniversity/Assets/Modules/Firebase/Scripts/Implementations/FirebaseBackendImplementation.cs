@@ -12,6 +12,12 @@ public class FirebaseBackendImplementation : MonoBehaviour, IBackendService
     [DllImport("__Internal")]
     private static extern void Firebase_Initialize(string configJson, string callbackObjName);
     [DllImport("__Internal")]
+    private static extern void Firebase_SetRememberMe(int rememberMe);
+    [DllImport("__Internal")]
+    private static extern void Firebase_TryAutoLogin();
+    [DllImport("__Internal")]
+    private static extern void Firebase_Logout();
+    [DllImport("__Internal")]
     private static extern void Firebase_Firestore_Set(string path, string json);
     [DllImport("__Internal")]
     private static extern void Firebase_Firestore_Update(string path, string json);
@@ -24,6 +30,7 @@ public class FirebaseBackendImplementation : MonoBehaviour, IBackendService
 
     private Action<BackendResponse> loginSuccess;
     private Action<BackendResponse> registerSuccess;
+    private Action<BackendResponse> autoLoginSuccess;
     private Action<string> currentError;
     
     // Support for multiple concurrent Firestore requests
@@ -48,6 +55,42 @@ public class FirebaseBackendImplementation : MonoBehaviour, IBackendService
     {
         currentUserId = userId;
         Debug.Log($"🔥 [FirebaseBackend] User ID synced: {userId}");
+    }
+
+    public void SetRememberMe(bool rememberMe)
+    {
+        #if !UNITY_EDITOR && UNITY_WEBGL
+        Firebase_SetRememberMe(rememberMe ? 1 : 0);
+        #endif
+    }
+
+    public void TryAutoLogin(Action<BackendResponse> onSuccess, Action<string> onError)
+    {
+        autoLoginSuccess = (res) => {
+            currentUserId = res.userId;
+            onSuccess?.Invoke(res);
+        };
+        currentError = onError;
+
+        #if !UNITY_EDITOR && UNITY_WEBGL
+        Firebase_TryAutoLogin();
+        #else
+        string userId = PlayerPrefs.GetString("OnboardingUserId_Str", "");
+        if (!string.IsNullOrEmpty(userId))
+        {
+            onSuccess?.Invoke(new BackendResponse {
+                userId = userId,
+                username = PlayerPrefs.GetString("OnboardingUsername", ""),
+                email = PlayerPrefs.GetString("OnboardingEmail", ""),
+                avatar_index = PlayerPrefs.GetInt("OnboardingAvatarIndex", 0),
+                message = "Editor auto-login from PlayerPrefs"
+            });
+        }
+        else
+        {
+            onError?.Invoke("No saved local session.");
+        }
+        #endif
     }
 
     public void FirestoreSet(string path, string json, Action<bool, string> callback)
@@ -134,6 +177,14 @@ public class FirebaseBackendImplementation : MonoBehaviour, IBackendService
         Firebase_Register(data.email, data.password, data.username);
         #else
         onSuccess?.Invoke(new BackendResponse { userId = "1", username = data.username });
+        #endif
+    }
+
+    public void Logout()
+    {
+        currentUserId = "";
+        #if !UNITY_EDITOR && UNITY_WEBGL
+        Firebase_Logout();
         #endif
     }
 
@@ -329,6 +380,17 @@ public class FirebaseBackendImplementation : MonoBehaviour, IBackendService
     {
         var data = JsonUtility.FromJson<BackendResponse>(json);
         loginSuccess?.Invoke(data);
+    }
+
+    public void OnFirebaseAutoLoginSuccess(string json)
+    {
+        var data = JsonUtility.FromJson<BackendResponse>(json);
+        autoLoginSuccess?.Invoke(data);
+    }
+
+    public void OnFirebaseAutoLoginFailed(string message)
+    {
+        currentError?.Invoke(message);
     }
 
     public void OnFirebaseRegisterSuccess(string json)

@@ -116,6 +116,7 @@ public class FastRegisterScreen : ScreenBase
         if (!ValidateInputs()) return;
 
         ShowLoading("Creating your account...");
+        BackendSettings.Instance.Service?.SetRememberMe(true);
 
         UserData userData = new UserData
         {
@@ -142,6 +143,7 @@ public class FastRegisterScreen : ScreenBase
             PlayerPrefs.Save();
 
             OnboardingManager.Instance?.Initialize(response.userId, finalUsername, emailInput.text.Trim());
+            OnboardingManager.Instance?.SetRememberMe(true);
 
             Invoke(nameof(GoToFastAvatar), 1.3f);
         }

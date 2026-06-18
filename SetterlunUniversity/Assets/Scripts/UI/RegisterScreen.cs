@@ -152,6 +152,7 @@ public class RegisterScreen : ScreenBase
         if (!ValidateInputs()) return;
 
         ShowLoading("Creating your account...");
+        BackendSettings.Instance.Service?.SetRememberMe(true);
 
         string selectedDiscovery = discoveryDropdown.options[discoveryDropdown.value].text;
         if (selectedDiscovery == "Select how you found us...")
@@ -180,6 +181,7 @@ public class RegisterScreen : ScreenBase
         {
             // Initialize Managers
             OnboardingManager.Instance?.Initialize(response.userId, response.username, response.email);
+            OnboardingManager.Instance?.SetRememberMe(true);
 
             Invoke(nameof(GoToNextScreen), 1.3f);
         }

@@ -58,10 +58,10 @@ public class LoadingScreen : ScreenBase
     public void StartLoading(System.Action onComplete, string status = "Loading...")
     {
         onLoadingComplete = onComplete;
-        if (statusText != null) statusText.text = status;
         progress = 0f;
         isLoading = true;
         Show();
+        if (statusText != null) statusText.text = status;
     }
 
     private void InvokeOnLoadingComplete()

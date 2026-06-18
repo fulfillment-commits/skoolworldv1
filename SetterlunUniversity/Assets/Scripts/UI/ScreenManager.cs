@@ -123,6 +123,7 @@ public class ScreenManager : MonoBehaviour
         LoadingScreen loading = GetLoadingScreen();
         if (loading != null)
         {
+            ShowScreen(ScreenType.Loading);
             loading.StartLoading(null, status);
         }
         else

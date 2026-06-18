@@ -43,6 +43,32 @@ public class CustomAPIBackendImplementation : MonoBehaviour, IBackendService
         // Custom API uses UserAPI instance directly or handles it internally
     }
 
+    public void SetRememberMe(bool rememberMe)
+    {
+    }
+
+    public void TryAutoLogin(Action<BackendResponse> onSuccess, Action<string> onError)
+    {
+        string userId = PlayerPrefs.GetString("OnboardingUserId_Str", "");
+        if (!string.IsNullOrEmpty(userId))
+        {
+            onSuccess?.Invoke(new BackendResponse {
+                userId = userId,
+                username = PlayerPrefs.GetString("OnboardingUsername", ""),
+                email = PlayerPrefs.GetString("OnboardingEmail", ""),
+                avatar_index = PlayerPrefs.GetInt("OnboardingAvatarIndex", 0),
+                message = "Saved session"
+            });
+            return;
+        }
+
+        onError?.Invoke("No saved session.");
+    }
+
+    public void Logout()
+    {
+    }
+
     public void Login(string login, string password, Action<BackendResponse> onSuccess, Action<string> onError)
     {
         UserAPI.Instance.Login(login, password, (res) => {

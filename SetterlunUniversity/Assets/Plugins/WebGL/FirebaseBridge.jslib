@@ -3,7 +3,8 @@ var FirebaseBridge = {
         auth: null,
         db: null,
         callbackObj: "BackendRunner",
-        isInitialized: false
+        isInitialized: false,
+        rememberMe: true
     },
 
     Firebase_Initialize: function(configJson, callbackObjName) {
@@ -26,6 +27,9 @@ var FirebaseBridge = {
             }
             
             FirebaseState.auth = firebase.auth();
+            FirebaseState.auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL).catch(function(error) {
+                console.warn("[Firebase Bridge] Failed to set default auth persistence: " + error.message);
+            });
             
             if (typeof firebase.firestore === 'function') {
                 FirebaseState.db = firebase.firestore();
@@ -39,6 +43,71 @@ var FirebaseBridge = {
         }
     },
 
+    Firebase_SetRememberMe: function(rememberMe) {
+        FirebaseState.rememberMe = rememberMe === 1;
+    },
+
+    Firebase_TryAutoLogin: function() {
+        if (!FirebaseState.auth || !FirebaseState.db) {
+            setTimeout(function() {
+                SendMessage(FirebaseState.callbackObj, "OnFirebaseAutoLoginFailed", "Firebase is not initialized.");
+            }, 0);
+            return;
+        }
+
+        var unsubscribe = FirebaseState.auth.onAuthStateChanged(function(user) {
+            if (unsubscribe) {
+                unsubscribe();
+            }
+
+            if (!user) {
+                setTimeout(function() {
+                    SendMessage(FirebaseState.callbackObj, "OnFirebaseAutoLoginFailed", "No persisted Firebase user.");
+                }, 0);
+                return;
+            }
+
+            FirebaseState.db.collection("users").doc(user.uid).get()
+                .then(function(doc) {
+                    var userData = {
+                        userId: user.uid,
+                        email: user.email || "",
+                        username: "User",
+                        avatar_index: 0
+                    };
+
+                    if (doc.exists) {
+                        var data = doc.data();
+                        userData.username = data.username || userData.username;
+                        userData.avatar_index = data.avatar_index || 0;
+                    }
+
+                    setTimeout(function() {
+                        SendMessage(FirebaseState.callbackObj, "OnFirebaseAutoLoginSuccess", JSON.stringify(userData));
+                    }, 0);
+                })
+                .catch(function(error) {
+                    setTimeout(function() {
+                        SendMessage(FirebaseState.callbackObj, "OnFirebaseAutoLoginFailed", error.message);
+                    }, 0);
+                });
+        }, function(error) {
+            setTimeout(function() {
+                SendMessage(FirebaseState.callbackObj, "OnFirebaseAutoLoginFailed", error.message);
+            }, 0);
+        });
+    },
+
+    Firebase_Logout: function() {
+        if (!FirebaseState.auth) {
+            return;
+        }
+
+        FirebaseState.auth.signOut().catch(function(error) {
+            console.warn("[Firebase Bridge] Logout failed: " + error.message);
+        });
+    },
+
     Firebase_Register: function(email, password, username) {
         if (!FirebaseState.auth) {
             console.error("❌ [Firebase Bridge] Cannot Register: Auth not initialized!");
@@ -48,8 +117,15 @@ var FirebaseBridge = {
         var emailStr = UTF8ToString(email);
         var passStr = UTF8ToString(password);
         var userStr = UTF8ToString(username);
-        
-        FirebaseState.auth.createUserWithEmailAndPassword(emailStr, passStr)
+
+        var persistence = FirebaseState.rememberMe
+            ? firebase.auth.Auth.Persistence.LOCAL
+            : firebase.auth.Auth.Persistence.SESSION;
+
+        FirebaseState.auth.setPersistence(persistence)
+            .then(function() {
+                return FirebaseState.auth.createUserWithEmailAndPassword(emailStr, passStr);
+            })
             .then(function(userCredential) {
                 var user = userCredential.user;
                 
@@ -84,8 +160,15 @@ var FirebaseBridge = {
         
         var emailStr = UTF8ToString(email);
         var passStr = UTF8ToString(password);
-        
-        FirebaseState.auth.signInWithEmailAndPassword(emailStr, passStr)
+
+        var persistence = FirebaseState.rememberMe
+            ? firebase.auth.Auth.Persistence.LOCAL
+            : firebase.auth.Auth.Persistence.SESSION;
+
+        FirebaseState.auth.setPersistence(persistence)
+            .then(function() {
+                return FirebaseState.auth.signInWithEmailAndPassword(emailStr, passStr);
+            })
             .then(function(userCredential) {
                 var user = userCredential.user;
                 

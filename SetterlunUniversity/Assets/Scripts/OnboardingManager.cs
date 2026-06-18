@@ -22,6 +22,9 @@ public class OnboardingManager : MonoBehaviour
     private const string PLAYERPREFS_USER_ID = "OnboardingUserId_Str";
     private const string PLAYERPREFS_USERNAME = "OnboardingUsername";
     private const string PLAYERPREFS_EMAIL = "OnboardingEmail";
+    private const string PLAYERPREFS_REMEMBER_ME = "OnboardingRememberMe";
+    private const string PLAYERPREFS_REMEMBER_UNTIL_UTC = "OnboardingRememberUntilUtc";
+    private const int REMEMBER_DAYS = 30;
 
     private void Awake()
     {
@@ -55,6 +58,19 @@ public class OnboardingManager : MonoBehaviour
     {
         if (ScreenManager.Instance != null)
         {
+            if (ShouldAttemptRememberedLogin())
+            {
+                IBackendService service = BackendSettings.Instance.Service;
+                if (service != null)
+                {
+                    ScreenManager.Instance.ShowLoadingScreen("Restoring session...");
+                    service.TryAutoLogin(HandleAutoLoginSuccess, HandleAutoLoginFailed);
+                    return;
+                }
+
+                Debug.LogWarning("[OnboardingManager] Backend service is not ready, cannot restore remembered session.");
+            }
+
             ScreenManager.Instance.ShowScreen(welcomeScreenType);
         }
     }
@@ -77,7 +93,88 @@ public class OnboardingManager : MonoBehaviour
         
         InitializeQuestManager();
         
-        PUN_NetworkManager.nm.ConnetNow();
+        if (PUN_NetworkManager.nm != null)
+        {
+            PUN_NetworkManager.nm.ConnetNow();
+        }
+        else
+        {
+            Debug.LogWarning("[OnboardingManager] PUN_NetworkManager is not ready, skipping immediate Photon connect.");
+        }
+    }
+
+    public void SetRememberMe(bool rememberMe)
+    {
+        if (rememberMe)
+        {
+            PlayerPrefs.SetInt(PLAYERPREFS_REMEMBER_ME, 1);
+            PlayerPrefs.SetString(PLAYERPREFS_REMEMBER_UNTIL_UTC, DateTime.UtcNow.AddDays(REMEMBER_DAYS).ToString("O"));
+        }
+        else
+        {
+            PlayerPrefs.SetInt(PLAYERPREFS_REMEMBER_ME, 0);
+            PlayerPrefs.DeleteKey(PLAYERPREFS_REMEMBER_UNTIL_UTC);
+        }
+
+        PlayerPrefs.Save();
+    }
+
+    private bool ShouldAttemptRememberedLogin()
+    {
+        if (PlayerPrefs.GetInt(PLAYERPREFS_REMEMBER_ME, 0) != 1)
+        {
+            return false;
+        }
+
+        string rememberUntil = PlayerPrefs.GetString(PLAYERPREFS_REMEMBER_UNTIL_UTC, "");
+        if (string.IsNullOrEmpty(rememberUntil) || !DateTime.TryParse(rememberUntil, null, System.Globalization.DateTimeStyles.RoundtripKind, out DateTime expiryUtc))
+        {
+            ClearRememberedLogin();
+            return false;
+        }
+
+        if (DateTime.UtcNow > expiryUtc.ToUniversalTime())
+        {
+            ClearRememberedLogin();
+            BackendSettings.Instance.Service?.Logout();
+            return false;
+        }
+
+        return true;
+    }
+
+    private void HandleAutoLoginSuccess(BackendResponse response)
+    {
+        if (response == null || string.IsNullOrEmpty(response.userId))
+        {
+            HandleAutoLoginFailed("Auto-login response did not include a user id.");
+            return;
+        }
+
+        if (response.avatar_index >= 0)
+        {
+            PlayerPrefs.SetInt("OnboardingAvatarIndex", response.avatar_index);
+            PlayerPrefs.Save();
+        }
+
+        Initialize(response.userId, response.username, response.email);
+        ScreenManager.Instance.ShowScreen(avatarScreenType);
+    }
+
+    private void HandleAutoLoginFailed(string error)
+    {
+        Debug.Log($"[OnboardingManager] Auto-login skipped: {error}");
+        if (ScreenManager.Instance != null)
+        {
+            ScreenManager.Instance.ShowScreen(welcomeScreenType);
+        }
+    }
+
+    private static void ClearRememberedLogin()
+    {
+        PlayerPrefs.SetInt(PLAYERPREFS_REMEMBER_ME, 0);
+        PlayerPrefs.DeleteKey(PLAYERPREFS_REMEMBER_UNTIL_UTC);
+        PlayerPrefs.Save();
     }
 
     public void StartJourney()
