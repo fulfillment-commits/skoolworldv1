@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Invector.vCamera;
 using Invector.vCharacterController;
+using ASAD_Multiplyer.Chat;
 using ASAD_Multiplyer.PlayerController;
 using Unity.VisualScripting;
 using Hashtable = ExitGames.Client.Photon.Hashtable;
@@ -23,6 +24,8 @@ namespace ASAD_Multiplyer.Network
         // public bl_MiniMap miniMap;
         private const string RoomName = "Veelive";
         private const string PlayerIdKey = "PlayerIds";
+        private const string PlayerPrefsUserId = "OnboardingUserId_Str";
+        private const string PlayerPrefsUsername = "OnboardingUsername";
         private int targetSceneNumber;
         private string targetSceneName;
         Vector3 lastPosition=Vector3.zero;
@@ -109,18 +112,18 @@ namespace ASAD_Multiplyer.Network
                 _syncScenes;
             // Debug.Log("user room id: "+URLImageRetriever.instance.myRoomId);
 
-            StartCoroutine(ConnetNow());
+            // StartCoroutine(ConnetNow());
 
         }
 
-        IEnumerator ConnetNow()
+        public void ConnetNow()
         {
-            yield return new WaitForEndOfFrame();
+            // yield return new WaitForEndOfFrame();
             // yield return new WaitUntil(() => !string.IsNullOrEmpty(URLImageRetriever.instance.myRoomId));
             // SetPlayerName(URLImageRetriever.instance.userData.data.username +"$" + URLImageRetriever.instance.urlData.user_id +
             //               "$" +URLImageRetriever.instance.userData.data.profileImage.url+"$" +URLImageRetriever.instance.myRoomId);
             // StartCoroutine(LoadMiniMapIcon(URLImageRetriever.instance.userData.data.profileImage.url));
-            SetPlayerName(GenerateRandomName());
+            SetPlayerName(BuildInitialPlayerName());
             PhotonNetwork.NetworkingClient.UseAlternativeUdpPorts = true;
             // PhotonNetwork.NetworkingClient.LoadBalancingPeer.DebugOut = ExitGames.Client.Photon.DebugLevel.ALL;
             // PhotonNetwork.NetworkingClient.AddCallbackTarget(new DebugLogger());
@@ -134,6 +137,24 @@ namespace ASAD_Multiplyer.Network
             int number = Random.Range(100, 999);
 
             return $"{adjective}{noun}{number}";
+        }
+
+        string BuildInitialPlayerName()
+        {
+            string userId = PlayerPrefs.GetString(PlayerPrefsUserId, "");
+            string username = PlayerPrefs.GetString(PlayerPrefsUsername, "");
+
+            if (!string.IsNullOrWhiteSpace(userId))
+            {
+                if (string.IsNullOrWhiteSpace(username))
+                {
+                    username = GenerateRandomName();
+                }
+
+                return ChatIdentityUtility.BuildPunNickname(username, userId);
+            }
+
+            return GenerateRandomName();
         }
         
         
@@ -227,6 +248,10 @@ namespace ASAD_Multiplyer.Network
             }
 
             PhotonNetwork.NickName = name;
+            if (ChatIdentityUtility.TryParsePunNickname(name, out _, out string firebaseUid))
+            {
+                PhotonNetwork.AuthValues = new AuthenticationValues(firebaseUid);
+            }
         }
 
         public void Connect()

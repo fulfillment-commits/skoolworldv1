@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Text;
+using ASAD_Multiplyer.Network;
 using UnityEngine;
 using UnityEngine.Networking;
 using UnityEngine.SceneManagement;
@@ -75,6 +76,8 @@ public class OnboardingManager : MonoBehaviour
         Debug.Log($"Initialized OnboardingManager for User ID: {userId}, Username: {username}");
         
         InitializeQuestManager();
+        
+        PUN_NetworkManager.nm.ConnetNow();
     }
 
     public void StartJourney()
