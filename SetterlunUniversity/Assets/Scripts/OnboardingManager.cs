@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Text;
 using ASAD_Multiplyer.Network;
+using ASAD_Multiplyer.PlayerController;
 using UnityEngine;
 using UnityEngine.Networking;
 using UnityEngine.SceneManagement;
@@ -24,7 +25,10 @@ public class OnboardingManager : MonoBehaviour
     private const string PLAYERPREFS_EMAIL = "OnboardingEmail";
     private const string PLAYERPREFS_REMEMBER_ME = "OnboardingRememberMe";
     private const string PLAYERPREFS_REMEMBER_UNTIL_UTC = "OnboardingRememberUntilUtc";
+    private const string PLAYERPREFS_AVATAR_INDEX = "OnboardingAvatarIndex";
+    private const string PLAYERPREFS_AVATAR_SELECTED_PREFIX = "OnboardingAvatarSelected_";
     private const int REMEMBER_DAYS = 30;
+    private Coroutine enterWorldWhenReadyRoutine;
 
     private void Awake()
     {
@@ -151,14 +155,8 @@ public class OnboardingManager : MonoBehaviour
             return;
         }
 
-        if (response.avatar_index >= 0)
-        {
-            PlayerPrefs.SetInt("OnboardingAvatarIndex", response.avatar_index);
-            PlayerPrefs.Save();
-        }
-
         Initialize(response.userId, response.username, response.email);
-        ScreenManager.Instance.ShowScreen(avatarScreenType);
+        ContinueAfterLogin(response);
     }
 
     private void HandleAutoLoginFailed(string error)
@@ -194,6 +192,134 @@ public class OnboardingManager : MonoBehaviour
     public void ContinueToAvatar()
     {
         ScreenManager.Instance.ShowScreen(avatarScreenType);
+    }
+
+    public void ContinueAfterLogin(BackendResponse response)
+    {
+        SaveAvatarFromBackend(response);
+
+        if (HasSelectedAvatar(response))
+        {
+            EnterWorldWhenNetworkPlayerReady();
+            return;
+        }
+
+        ScreenManager.Instance.ShowScreen(avatarScreenType);
+    }
+
+    public void MarkAvatarSelected(int avatarIndex)
+    {
+        PlayerPrefs.SetInt(PLAYERPREFS_AVATAR_INDEX, avatarIndex);
+
+        if (!string.IsNullOrEmpty(currentUserId))
+        {
+            PlayerPrefs.SetInt(GetAvatarSelectedPrefsKey(currentUserId), 1);
+        }
+
+        PlayerPrefs.Save();
+    }
+
+    public void EnterWorldWhenNetworkPlayerReady()
+    {
+        if (enterWorldWhenReadyRoutine != null)
+        {
+            StopCoroutine(enterWorldWhenReadyRoutine);
+        }
+
+        if (ScreenManager.Instance != null)
+        {
+            ScreenManager.Instance.ShowLoadingScreen("Connecting player...");
+        }
+
+        enterWorldWhenReadyRoutine = StartCoroutine(EnterWorldWhenNetworkPlayerReadyRoutine());
+    }
+
+    private IEnumerator EnterWorldWhenNetworkPlayerReadyRoutine()
+    {
+        const float timeout = 30f;
+        float elapsed = 0f;
+        LoadingScreen loading = ScreenManager.Instance != null ? ScreenManager.Instance.GetLoadingScreen() : null;
+
+        while (elapsed < timeout)
+        {
+            if (PUN_NetworkManager.nm != null && PUN_NetworkManager.nm.myPlayer != null)
+            {
+                ApplySavedAvatarToLocalPlayer();
+                enterWorldWhenReadyRoutine = null;
+                EnterWorld();
+                yield break;
+            }
+
+            if (loading != null)
+            {
+                loading.SetStatus("Connecting player...");
+            }
+
+            elapsed += Time.deltaTime;
+            yield return null;
+        }
+
+        enterWorldWhenReadyRoutine = null;
+        Debug.LogWarning("[OnboardingManager] Timed out waiting for Photon player before entering world.");
+        if (loading != null)
+        {
+            loading.SetStatus("Network player is still connecting. Please check your connection.");
+        }
+    }
+
+    private void ApplySavedAvatarToLocalPlayer()
+    {
+        if (PUN_NetworkManager.nm == null || PUN_NetworkManager.nm.myPlayer == null)
+        {
+            return;
+        }
+
+        PUN_SyncPlayer syncPlayer = PUN_NetworkManager.nm.myPlayer.GetComponent<PUN_SyncPlayer>();
+        if (syncPlayer != null)
+        {
+            syncPlayer.LoadOutfit();
+        }
+    }
+
+    private void SaveAvatarFromBackend(BackendResponse response)
+    {
+        if (response == null)
+        {
+            return;
+        }
+
+        if (response.avatar_index >= 0)
+        {
+            PlayerPrefs.SetInt(PLAYERPREFS_AVATAR_INDEX, response.avatar_index);
+        }
+
+        if (!string.IsNullOrEmpty(response.userId) && HasSelectedAvatar(response))
+        {
+            PlayerPrefs.SetInt(GetAvatarSelectedPrefsKey(response.userId), 1);
+        }
+
+        PlayerPrefs.Save();
+    }
+
+    private bool HasSelectedAvatar(BackendResponse response)
+    {
+        if (response == null)
+        {
+            return false;
+        }
+
+        if (response.avatar_selected || response.avatar_index > 0)
+        {
+            return true;
+        }
+
+        return !string.IsNullOrEmpty(response.userId)
+               && PlayerPrefs.GetInt(GetAvatarSelectedPrefsKey(response.userId), 0) == 1;
+    }
+
+    private static string GetAvatarSelectedPrefsKey(string userId)
+    {
+        return PLAYERPREFS_AVATAR_SELECTED_PREFIX + userId;
     }
 
     public void EnterWorld()

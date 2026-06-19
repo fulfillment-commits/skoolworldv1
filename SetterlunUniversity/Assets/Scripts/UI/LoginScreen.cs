@@ -2,6 +2,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 using System;
+using System.Collections;
 
 public class LoginScreen : ScreenBase
 {
@@ -126,7 +127,7 @@ public class LoginScreen : ScreenBase
             OnboardingManager.Instance?.Initialize(response.userId, response.username, response.email);
             OnboardingManager.Instance?.SetRememberMe(pendingRememberMe);
 
-            Invoke(nameof(GoToNextScreen), 1.2f);
+            StartCoroutine(GoToNextScreenAfterDelay(response));
         }
         else
         {
@@ -157,9 +158,10 @@ public class LoginScreen : ScreenBase
         return true;
     }
 
-    private void GoToNextScreen()
+    private IEnumerator GoToNextScreenAfterDelay(BackendResponse response)
     {
-        ScreenManager.Instance.ShowScreen(ScreenType.FastAvatar);
+        yield return new WaitForSeconds(1.2f);
+        OnboardingManager.Instance?.ContinueAfterLogin(response);
     }
 
     private void OnRegisterClicked()

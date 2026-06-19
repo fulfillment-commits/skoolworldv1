@@ -73,13 +73,15 @@ var FirebaseBridge = {
                         userId: user.uid,
                         email: user.email || "",
                         username: "User",
-                        avatar_index: 0
+                        avatar_index: 0,
+                        avatar_selected: false
                     };
 
                     if (doc.exists) {
                         var data = doc.data();
                         userData.username = data.username || userData.username;
                         userData.avatar_index = data.avatar_index || 0;
+                        userData.avatar_selected = data.avatar_selected === true || userData.avatar_index > 0;
                     }
 
                     setTimeout(function() {
@@ -134,6 +136,7 @@ var FirebaseBridge = {
                     username: userStr,
                     email: emailStr,
                     avatar_index: 0,
+                    avatar_selected: false,
                     created_at: firebase.firestore.FieldValue.serverTimestamp()
                 }).then(function() {
                     setTimeout(function() {
@@ -179,13 +182,15 @@ var FirebaseBridge = {
                             userId: user.uid,
                             email: user.email,
                             username: "User", // Default
-                            avatar_index: 0
+                            avatar_index: 0,
+                            avatar_selected: false
                         };
                         
                         if (doc.exists) {
                             var data = doc.data();
                             userData.username = data.username || userData.username;
                             userData.avatar_index = data.avatar_index || 0;
+                            userData.avatar_selected = data.avatar_selected === true || userData.avatar_index > 0;
                         }
                         
                         setTimeout(function() {

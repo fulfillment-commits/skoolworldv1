@@ -7,6 +7,7 @@ public class LocalDemoBackendImplementation : MonoBehaviour, IBackendService
     private const string PREFS_USER_LIST = "LocalDemo_Users";
     private const string PREFS_QUEST_PREFIX = "LocalDemo_Quest_";
     private const string PREFS_AVATAR_PREFIX = "LocalDemo_Avatar_";
+    private const string PREFS_AVATAR_SELECTED_PREFIX = "LocalDemo_AvatarSelected_";
     private const string PREFS_USER_DATA_PREFIX = "LocalDemo_UserData_";
 
     [Serializable]
@@ -29,6 +30,7 @@ public class LocalDemoBackendImplementation : MonoBehaviour, IBackendService
                 username = PlayerPrefs.GetString("OnboardingUsername", ""),
                 email = PlayerPrefs.GetString("OnboardingEmail", ""),
                 avatar_index = PlayerPrefs.GetInt("OnboardingAvatarIndex", 0),
+                avatar_selected = PlayerPrefs.GetInt(PREFS_AVATAR_SELECTED_PREFIX + userId, 0) == 1,
                 message = "Local saved session"
             });
             return;
@@ -53,6 +55,8 @@ public class LocalDemoBackendImplementation : MonoBehaviour, IBackendService
                 userId = user.userId,
                 username = user.username,
                 email = user.email,
+                avatar_index = PlayerPrefs.GetInt(PREFS_AVATAR_PREFIX + user.userId, 0),
+                avatar_selected = PlayerPrefs.GetInt(PREFS_AVATAR_SELECTED_PREFIX + user.userId, 0) == 1,
                 message = "Local Login Successful"
             });
         }
@@ -115,6 +119,7 @@ public class LocalDemoBackendImplementation : MonoBehaviour, IBackendService
     {
         Debug.Log($"🏠 [LocalDemo] Updating Avatar to {avatarIndex} for User {userId}");
         PlayerPrefs.SetInt(PREFS_AVATAR_PREFIX + userId, avatarIndex);
+        PlayerPrefs.SetInt(PREFS_AVATAR_SELECTED_PREFIX + userId, 1);
         PlayerPrefs.Save();
         onComplete?.Invoke(true);
     }
@@ -127,6 +132,7 @@ public class LocalDemoBackendImplementation : MonoBehaviour, IBackendService
             var data = JsonUtility.FromJson<UserData>(json);
             int avatar = PlayerPrefs.GetInt(PREFS_AVATAR_PREFIX + userId, 0);
             data.avatar_index = avatar;
+            data.avatar_selected = PlayerPrefs.GetInt(PREFS_AVATAR_SELECTED_PREFIX + userId, 0) == 1;
             onSuccess?.Invoke(data);
         }
         else

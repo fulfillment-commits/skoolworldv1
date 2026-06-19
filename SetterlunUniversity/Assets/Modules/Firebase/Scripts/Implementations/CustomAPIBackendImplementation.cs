@@ -57,6 +57,7 @@ public class CustomAPIBackendImplementation : MonoBehaviour, IBackendService
                 username = PlayerPrefs.GetString("OnboardingUsername", ""),
                 email = PlayerPrefs.GetString("OnboardingEmail", ""),
                 avatar_index = PlayerPrefs.GetInt("OnboardingAvatarIndex", 0),
+                avatar_selected = PlayerPrefs.GetInt("OnboardingAvatarSelected_" + userId, 0) == 1,
                 message = "Saved session"
             });
             return;

@@ -99,8 +99,7 @@ public class AvatarScreen : ScreenBase
     private void OnContinueClicked()
     {
         // Save locally
-        PlayerPrefs.SetInt(PLAYERPREFS_AVATAR_INDEX, selectedAvatarIndex);
-        PlayerPrefs.Save();
+        OnboardingManager.Instance?.MarkAvatarSelected(selectedAvatarIndex);
         Debug.Log($"selectedAvatarIndex: {PlayerPrefs.GetInt(PLAYERPREFS_AVATAR_INDEX, 0)}");
         
         // Save to backend
@@ -111,8 +110,7 @@ public class AvatarScreen : ScreenBase
                 if (success)
                 {
                     OnboardingQuestManager.Instance?.SetAvatarIndex(selectedAvatarIndex);
-                    PUN_NetworkManager.nm.myPlayer.GetComponent<PUN_SyncPlayer>().LoadOutfit();
-                    OnboardingManager.Instance.EnterWorld();
+                    OnboardingManager.Instance.EnterWorldWhenNetworkPlayerReady();
                 }
                 else
                 {
@@ -129,14 +127,13 @@ public class AvatarScreen : ScreenBase
         {
             Debug.LogWarning("⚠️ No User ID found for sync. Proceeding locally.");
             OnboardingQuestManager.Instance?.SetAvatarIndex(selectedAvatarIndex);
-            PUN_NetworkManager.nm.myPlayer.GetComponent<PUN_SyncPlayer>().LoadOutfit();
-            OnboardingManager.Instance.EnterWorld();
+            OnboardingManager.Instance.EnterWorldWhenNetworkPlayerReady();
         }
     }
 
     private void ProceedAfterDelay()
     {
-        OnboardingManager.Instance.EnterWorld();
+        OnboardingManager.Instance.EnterWorldWhenNetworkPlayerReady();
     }
 
     private void OnBackClicked()

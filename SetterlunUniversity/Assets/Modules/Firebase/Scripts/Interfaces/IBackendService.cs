@@ -40,6 +40,7 @@ public class UserData
     public string phone;
     public string password;
     public int avatar_index;
+    public bool avatar_selected;
 }
 
 [Serializable]
@@ -49,6 +50,7 @@ public class BackendResponse
     public string username;
     public string email;
     public int avatar_index;
+    public bool avatar_selected;
     public string token;
     public string message;
 }

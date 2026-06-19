@@ -25,7 +25,7 @@ public class FastRegisterScreen : ScreenBase
     private void Start()
     {
         SetupPasswordToggle();
-        SetupEmailValidation();
+        // SetupEmailValidation();
 
         registerButton.onClick.AddListener(OnRegisterClicked);
         backToLoginButton.onClick.AddListener(OnBackToLoginClicked);
@@ -214,14 +214,14 @@ public class FastRegisterScreen : ScreenBase
 
     private void ShowSuccess(string msg)
     {
-        statusText.text = "✅ " + msg;
+        statusText.text = msg;
         statusText.color = Color.green;
         registerButton.interactable = true;
     }
 
     private void ShowError(string msg)
     {
-        statusText.text = "❌ " + msg;
+        statusText.text =  msg;
         statusText.color = Color.red;
         registerButton.interactable = true;
     }

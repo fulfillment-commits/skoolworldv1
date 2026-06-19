@@ -117,21 +117,21 @@ public class RegisterScreen : ScreenBase
     // ====================== REAL-TIME EMAIL VALIDATION ======================
     private void OnEmailValueChanged(string email)
     {
-        if (string.IsNullOrEmpty(email))
-        {
-            ClearEmailFeedback();
-            return;
-        }
-
-        if (IsValidEmail(email))
-        {
-            ClearEmailFeedback();
-        }
-        else
-        {
-            statusText.text = "❌ Please enter a valid email address";
-            statusText.color = Color.red;
-        }
+        // if (string.IsNullOrEmpty(email))
+        // {
+        //     ClearEmailFeedback();
+        //     return;
+        // }
+        //
+        // if (IsValidEmail(email))
+        // {
+        //     ClearEmailFeedback();
+        // }
+        // else
+        // {
+        //     statusText.text = "❌ Please enter a valid email address";
+        //     statusText.color = Color.red;
+        // }
     }
 
     private bool IsValidEmail(string email)

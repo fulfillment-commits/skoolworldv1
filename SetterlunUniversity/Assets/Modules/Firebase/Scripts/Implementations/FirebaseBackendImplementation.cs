@@ -83,6 +83,7 @@ public class FirebaseBackendImplementation : MonoBehaviour, IBackendService
                 username = PlayerPrefs.GetString("OnboardingUsername", ""),
                 email = PlayerPrefs.GetString("OnboardingEmail", ""),
                 avatar_index = PlayerPrefs.GetInt("OnboardingAvatarIndex", 0),
+                avatar_selected = PlayerPrefs.GetInt("OnboardingAvatarSelected_" + userId, 0) == 1,
                 message = "Editor auto-login from PlayerPrefs"
             });
         }
@@ -155,6 +156,10 @@ public class FirebaseBackendImplementation : MonoBehaviour, IBackendService
     {
         loginSuccess = (res) => {
             currentUserId = res.userId;
+            if (!res.avatar_selected && !string.IsNullOrEmpty(res.userId))
+            {
+                res.avatar_selected = PlayerPrefs.GetInt("OnboardingAvatarSelected_" + res.userId, 0) == 1;
+            }
             onSuccess?.Invoke(res);
         };
         currentError = onError;
@@ -162,7 +167,13 @@ public class FirebaseBackendImplementation : MonoBehaviour, IBackendService
         Firebase_Login(login, password);
         #else
         Debug.LogWarning("Firebase WebGL Bridge only works in a WebGL build!");
-        onSuccess?.Invoke(new BackendResponse { userId = "1", username = login, message = "Editor Stub" });
+        onSuccess?.Invoke(new BackendResponse {
+            userId = "1",
+            username = login,
+            avatar_index = PlayerPrefs.GetInt("OnboardingAvatarIndex", 0),
+            avatar_selected = PlayerPrefs.GetInt("OnboardingAvatarSelected_1", 0) == 1,
+            message = "Editor Stub"
+        });
         #endif
     }
 
@@ -287,12 +298,12 @@ public class FirebaseBackendImplementation : MonoBehaviour, IBackendService
     public void UpdateAvatar(string userId, int avatarIndex, Action<bool> onComplete)
     {
         string path = $"users/{userId}";
-        var data = new AvatarUpdateData { avatar_index = avatarIndex };
+        var data = new AvatarUpdateData { avatar_index = avatarIndex, avatar_selected = true };
         FirestoreUpdate(path, JsonUtility.ToJson(data), (success, msg) => onComplete?.Invoke(success));
     }
 
     [Serializable]
-    private class AvatarUpdateData { public int avatar_index; }
+    private class AvatarUpdateData { public int avatar_index; public bool avatar_selected; }
 
     public void GetUserData(string userId, Action<UserData> onSuccess, Action<string> onError)
     {
