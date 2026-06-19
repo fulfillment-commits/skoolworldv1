@@ -5,8 +5,19 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="f976adce-1e4f-45bd-bef2-f7c88739f689" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/../.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/../.gitignore" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/.idea.SetterlunUniversity/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.SetterlunUniversity/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/ASAD_Multiplayer/Chat/Scripts/PUN_ChatManager.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/ASAD_Multiplayer/Chat/Scripts/PUN_ChatManager.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/ASAD_Multiplayer/NetworkScripts/PUN_NetworkManager.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/ASAD_Multiplayer/NetworkScripts/PUN_NetworkManager.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Invector-3rdPersonController/Basic Locomotion/Scripts/CharacterCreator/CameraStates/vBasicLocomotiont@CameraState.asset" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Invector-3rdPersonController/Basic Locomotion/Scripts/CharacterCreator/CameraStates/vBasicLocomotiont@CameraState.asset" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Assets/Scenes/Onboarding.unity" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scenes/Onboarding.unity" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Scenes/WorldScene.unity" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scenes/WorldScene.unity" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Scripts/UI/CoursePanelScreen.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/UI/CoursePanelScreen.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Scripts/UI/LoginScreen.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/UI/LoginScreen.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Scripts/UI/RegisterScreen.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/UI/RegisterScreen.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/UserSettings/EditorUserSettings.asset" beforeDir="false" afterPath="$PROJECT_DIR$/UserSettings/EditorUserSettings.asset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/UserSettings/Layouts/CurrentMaximizeLayout.dwlt" beforeDir="false" afterPath="$PROJECT_DIR$/UserSettings/Layouts/CurrentMaximizeLayout.dwlt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/UserSettings/Layouts/default-2022.dwlt" beforeDir="false" afterPath="$PROJECT_DIR$/UserSettings/Layouts/default-2022.dwlt" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -18,9 +29,11 @@
   </component>
   <component name="HighlightingSettingsPerFile">
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/5a51159933b34c0fa2fb34cbbf722ed88200/b8/f19a323e/VideoSource.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/../../../Fox Escape decompile/Assets/Scripts/Assembly-CSharp/CoinFlyEffect.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Assets/ASAD_Multiplayer/NetworkScripts/PUN_NetworkManager.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Assets/Scripts/CharacterTheme/LoadCharcterData.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Assets/Scripts/Editor/OnEnableAssignComponentEditor.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Assets/Scripts/UI/CoursePanelScreen.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Assets/Scripts/UI/QuestOptionChip.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Library/PackageCache/com.unity.ugui@1.0.0/Runtime/UI/Core/Toggle.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://E:/PizzaReady/PizzaReady/Assets/MyAssets/Scripts/MyAdManager.cs" root0="SKIP_HIGHLIGHTING" />
@@ -117,7 +130,8 @@
       <workItem from="1780553391649" duration="23400000" />
       <workItem from="1780897163237" duration="6081000" />
       <workItem from="1781695096976" duration="3432000" />
-      <workItem from="1781760485563" duration="11268000" />
+      <workItem from="1781760485563" duration="15997000" />
+      <workItem from="1781853819561" duration="940000" />
     </task>
     <servers />
   </component>

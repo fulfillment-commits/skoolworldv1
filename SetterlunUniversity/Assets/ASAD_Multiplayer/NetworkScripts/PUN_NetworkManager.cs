@@ -104,7 +104,7 @@ namespace ASAD_Multiplyer.Network
                 return;
             }
 
-            PhotonNetwork.KeepAliveInBackground = 180;
+            PhotonNetwork.KeepAliveInBackground = 300;
             PhotonNetwork.SendRate = 30;
             PhotonNetwork.SerializationRate = 30;
             // PhotonNetwork.NetworkingClient.LoadBalancingPeer.DisconnectTimeout = 60000;
@@ -276,7 +276,7 @@ namespace ASAD_Multiplyer.Network
             else
             {
                 PhotonNetwork.GameVersion = _gameVersion;
-                PhotonNetwork.NetworkingClient.LoadBalancingPeer.DisconnectTimeout = 10000;
+                PhotonNetwork.NetworkingClient.LoadBalancingPeer.DisconnectTimeout = 120000;
                 PhotonNetwork.ConnectUsingSettings();
             }
         }

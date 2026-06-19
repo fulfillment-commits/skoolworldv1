@@ -6,6 +6,7 @@ using TMPro;
 using ASAD_Multiplyer.Network;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 namespace ASAD_Multiplyer.Chat
@@ -57,6 +58,7 @@ namespace ASAD_Multiplyer.Chat
         private readonly HashSet<string> renderedMessageIds = new HashSet<string>();
         private enum ChatMode { Private, Public }
 
+        public bool showChatBtn=true;
         private ChatMode activeChatMode = ChatMode.Private;
         private Player activePlayer;
         private string activeUserId = "";
@@ -583,7 +585,7 @@ namespace ASAD_Multiplyer.Chat
 
         private void RefreshVisibility()
         {
-            bool shouldShow = IsLocalPlayerReady();
+            bool shouldShow = showChatBtn && IsLocalPlayerReady() && SceneManager.GetActiveScene().buildIndex!=0;
             SetJoinedUiVisible(shouldShow);
 
             if (!shouldShow)

@@ -59,7 +59,7 @@ public class RegisterScreen : ScreenBase
         SetupPasswordToggle();
 
         // Real-time email validation
-        emailInput.onValueChanged.AddListener(OnEmailValueChanged);
+        // emailInput.onValueChanged.AddListener(OnEmailValueChanged);
 
         registerButton.onClick.AddListener(OnRegisterClicked);
         loginButton.onClick.AddListener(OnLoginClicked);
@@ -254,14 +254,14 @@ public class RegisterScreen : ScreenBase
 
     private void ShowSuccess(string msg)
     {
-        statusText.text = "✅ " + msg;
+        statusText.text = msg;
         statusText.color = Color.green;
         registerButton.interactable = true;
     }
 
     private void ShowError(string msg)
     {
-        statusText.text = "❌ " + msg;
+        statusText.text =  msg;
         statusText.color = Color.red;
         registerButton.interactable = true;
     }

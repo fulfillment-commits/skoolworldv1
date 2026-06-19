@@ -190,14 +190,14 @@ public class LoginScreen : ScreenBase
 
     private void ShowSuccess(string msg)
     {
-        statusText.text = "✅ " + msg;
+        statusText.text =  msg;
         statusText.color = Color.green;
         loginButton.interactable = true;
     }
 
     private void ShowError(string msg)
     {
-        statusText.text = "❌ " + msg;
+        statusText.text =  msg;
         statusText.color = Color.red;
         loginButton.interactable = true;
     }

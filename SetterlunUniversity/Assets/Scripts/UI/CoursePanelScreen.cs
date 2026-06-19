@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using ASAD_Multiplyer.Chat;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
@@ -94,6 +95,8 @@ public class CoursePanelScreen : ScreenBase
             if (!courseData.IsCompleted(i)) { startIndex = i; break; }
         }
         SelectLesson(startIndex, openIframe: true);
+
+        PUN_ChatManager.Instance.showChatBtn = false;
     }
 
     protected override void OnHide()
@@ -284,6 +287,7 @@ public class CoursePanelScreen : ScreenBase
     private void OnCloseClicked()
     {
         iframeController?.HideIframe();
+        PUN_ChatManager.Instance.showChatBtn = true;
         if (ScreenManager.Instance != null)
             ScreenManager.Instance.GoBack();
         else
