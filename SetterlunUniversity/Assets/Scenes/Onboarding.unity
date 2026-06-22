@@ -26585,6 +26585,8 @@ MonoBehaviour:
   verticalAxisName: Mouse Y
   sensitivityX: 0.5
   sensitivityY: 0.5
+  deadZone: 0.08
+  smoothSpeed: 14
   invertX: 1
   invertY: 0
 --- !u!1 &418522655
@@ -71269,7 +71271,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1191385924}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: bc05c91a129a60f4190533b703bfcf4d, type: 3}
   m_Name: 

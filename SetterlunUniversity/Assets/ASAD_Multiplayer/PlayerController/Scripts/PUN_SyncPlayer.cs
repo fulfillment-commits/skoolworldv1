@@ -4,7 +4,8 @@ using Photon.Pun;
 using Photon.Realtime;
 using ExitGames.Client.Photon;
 using System.Collections.Generic;
-using Invector.vCharacterController;       
+using Invector.vCharacterController;
+using Invector.vCharacterController.PointClick;
 using Invector.vCharacterController.vActions;
 using UnityEngine.SceneManagement;
 
@@ -36,7 +37,8 @@ namespace ASAD_Multiplyer.PlayerController
         public PhotonView view;
         public Animator animator;
 
-        private vThirdPersonInput _input;
+        // private vThirdPersonInput _input;
+        private vPointAndClickInput _input;
 
         public LoadCharcterData characterOutfit;
         // public PlayerNameDisplay NameDisplay;
@@ -161,7 +163,7 @@ namespace ASAD_Multiplyer.PlayerController
                 view = GetComponent<PhotonView>();
             }
             ConfigureNetworkSync();
-            _input = GetComponent<vThirdPersonInput>();
+            _input = GetComponent<vPointAndClickInput>();
             if (_controller == null)
             {
                 _controller = GetComponent<vThirdPersonController>();
@@ -175,16 +177,19 @@ namespace ASAD_Multiplyer.PlayerController
                 // outfit setup
                 
                 if (GetComponent<vHeadTrack>()) GetComponent<vHeadTrack>().enabled = true;
+                if (GetComponent<vPointAndClickInput>()) GetComponent<vPointAndClickInput>().enabled = true;
+                if (GetComponent<vGenericAction>()) GetComponent<vGenericAction>().enabled = true;
+                if(transform.GetChild(1).GetComponent<vPointClickCursor>()) transform.GetChild(1).gameObject.SetActive(true);
                 if (GetComponent<CursorToggle>()) GetComponent<CursorToggle>().enabled = true;
                 if (GetComponent<vGenericAction>()) GetComponent<vGenericAction>().enabled = true;
                 if (GetComponent<vLadderAction>()) GetComponent<vLadderAction>().enabled = true;
                 if (GetComponent<PlayerTeleport>()) GetComponent<PlayerTeleport>().enabled = true;
-                if (GetComponent<KeyboardDirectInput>()) GetComponent<KeyboardDirectInput>().enabled = true;
+                // if (GetComponent<KeyboardDirectInput>()) GetComponent<KeyboardDirectInput>().enabled = true;
 
 
                 if (_input != null)
                 {
-                    _input.enabled = true;
+                    // _input.enabled = true;
                 }
                 // ChatCanvas.Instance.LoadAllPlayer();
                 // NameDisplay.gameObject.SetActive(false);

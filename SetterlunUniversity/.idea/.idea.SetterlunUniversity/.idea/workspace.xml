@@ -6,6 +6,26 @@
   <component name="ChangeListManager">
     <list default="true" id="f976adce-1e4f-45bd-bef2-f7c88739f689" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/../.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/../.gitignore" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/.idea.SetterlunUniversity/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.SetterlunUniversity/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/ASAD_Multiplayer/PlayerController/Resources/vBasicController_BSMC_CharacterBase.prefab" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/ASAD_Multiplayer/PlayerController/Resources/vBasicController_BSMC_CharacterBase.prefab" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/ASAD_Multiplayer/PlayerController/Scripts/PUN_SyncPlayer.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/ASAD_Multiplayer/PlayerController/Scripts/PUN_SyncPlayer.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Invector-3rdPersonController/Add-ons/Controller_Mobile/Basic/Scripts/InvectorCameraJoystick.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Invector-3rdPersonController/Add-ons/Controller_Mobile/Basic/Scripts/InvectorCameraJoystick.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Invector-3rdPersonController/Basic Locomotion/3D Models/Characters/Invector@V-Bot/FBX/Materials/V-bot-texture.mat" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Invector-3rdPersonController/Basic Locomotion/3D Models/Characters/Invector@V-Bot/FBX/Materials/V-bot-texture.mat" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Invector-3rdPersonController/Basic Locomotion/3D Models/Textures/prototype_textures/Materials/carbon.mat" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Invector-3rdPersonController/Basic Locomotion/3D Models/Textures/prototype_textures/Materials/carbon.mat" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Invector-3rdPersonController/Basic Locomotion/3D Models/Textures/prototype_textures/Materials/proto_gray 1.mat" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Invector-3rdPersonController/Basic Locomotion/3D Models/Textures/prototype_textures/Materials/proto_gray 1.mat" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Invector-3rdPersonController/Basic Locomotion/Editor.meta" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Invector-3rdPersonController/Basic Locomotion/Editor.meta" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Invector-3rdPersonController/Basic Locomotion/HUD/guide-texts/Materials/45.mat" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Invector-3rdPersonController/Basic Locomotion/HUD/guide-texts/Materials/45.mat" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Invector-3rdPersonController/Basic Locomotion/HUD/guide-texts/Materials/50.mat" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Invector-3rdPersonController/Basic Locomotion/HUD/guide-texts/Materials/50.mat" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Invector-3rdPersonController/Basic Locomotion/HUD/guide-texts/Materials/60.mat" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Invector-3rdPersonController/Basic Locomotion/HUD/guide-texts/Materials/60.mat" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Invector-3rdPersonController/Basic Locomotion/HUD/guide-texts/Materials/climb.mat" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Invector-3rdPersonController/Basic Locomotion/HUD/guide-texts/Materials/climb.mat" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Invector-3rdPersonController/Basic Locomotion/HUD/guide-texts/Materials/crouch.mat" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Invector-3rdPersonController/Basic Locomotion/HUD/guide-texts/Materials/crouch.mat" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Invector-3rdPersonController/Basic Locomotion/HUD/guide-texts/Materials/jumpover.mat" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Invector-3rdPersonController/Basic Locomotion/HUD/guide-texts/Materials/jumpover.mat" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Invector-3rdPersonController/Basic Locomotion/HUD/guide-texts/Materials/ragdoll.mat" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Invector-3rdPersonController/Basic Locomotion/HUD/guide-texts/Materials/ragdoll.mat" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Invector-3rdPersonController/Basic Locomotion/HUD/guide-texts/Materials/stepup.mat" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Invector-3rdPersonController/Basic Locomotion/HUD/guide-texts/Materials/stepup.mat" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Scenes/Onboarding.unity" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scenes/Onboarding.unity" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/UserSettings/EditorUserSettings.asset" beforeDir="false" afterPath="$PROJECT_DIR$/UserSettings/EditorUserSettings.asset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/UserSettings/Layouts/CurrentMaximizeLayout.dwlt" beforeDir="false" afterPath="$PROJECT_DIR$/UserSettings/Layouts/CurrentMaximizeLayout.dwlt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/UserSettings/Layouts/default-2022.dwlt" beforeDir="false" afterPath="$PROJECT_DIR$/UserSettings/Layouts/default-2022.dwlt" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -16,12 +36,13 @@
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/.." />
   </component>
   <component name="HighlightingSettingsPerFile">
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/37cc348edc804f4cb176b63962c716e7177200/4c/782dc800/UnityEvent`1.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/5a51159933b34c0fa2fb34cbbf722ed88200/b8/f19a323e/VideoSource.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/../../../Fox Escape decompile/Assets/Scripts/Assembly-CSharp/CoinFlyEffect.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Assets/ASAD_Multiplayer/NetworkScripts/PUN_NetworkManager.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Assets/Scripts/CharacterTheme/LoadCharcterData.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Assets/Scripts/Editor/OnEnableAssignComponentEditor.cs" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/Assets/Scripts/UI/CoursePanelScreen.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Assets/Scripts/UI/CoursePanelScreen.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Assets/Scripts/UI/QuestOptionChip.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Library/PackageCache/com.unity.ugui@1.0.0/Runtime/UI/Core/Toggle.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://E:/PizzaReady/PizzaReady/Assets/MyAssets/Scripts/MyAdManager.cs" root0="SKIP_HIGHLIGHTING" />
@@ -34,22 +55,22 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;chat-system&quot;,
-    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
-    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
-    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
-    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
-    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.general&quot;,
-    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "ModuleVcsDetector.initialDetectionPerformed": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager": "true",
+    "RunOnceActivity.git.unshallow": "true",
+    "git-widget-placeholder": "control",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "settings.editor.selected.configurable": "preferences.general",
+    "vue.rearranger.settings.migration": "true"
   }
-}</component>
+}]]></component>
   <component name="RunManager" selected="Attach to Unity Editor.Attach to Unity Editor">
     <configuration name="Start Unity" type="RunUnityExe" factoryName="Unity Executable">
       <option name="EXE_PATH" value="C:\Program Files\Unity\Hub\Editor\2022.3.62f2\Editor\Unity.exe" />
@@ -119,7 +140,8 @@
       <workItem from="1780897163237" duration="6081000" />
       <workItem from="1781695096976" duration="3432000" />
       <workItem from="1781760485563" duration="15997000" />
-      <workItem from="1781853819561" duration="3975000" />
+      <workItem from="1781853819561" duration="9990000" />
+      <workItem from="1782109922123" duration="1181000" />
     </task>
     <servers />
   </component>

@@ -23,13 +23,18 @@ public class InvectorCameraJoystick : MonoBehaviour, IPointerDownHandler, IPoint
     [Header("Sensitivity")]
     public float sensitivityX = 2f;
     public float sensitivityY = 2f;
+    [Range(0f, 0.5f)] public float deadZone = 0.08f;
+    public float smoothSpeed = 14f;
     public bool invertX;
     public bool invertY;
 
     private RectTransform rectTransform;
     private RectTransform parentRect;
     private Canvas parentCanvas;
-    private Vector2 startPosition;
+    private Vector3 startLocalPosition;
+    private Vector2 currentAxis;
+    private Vector2 smoothedAxis;
+    private bool isPressed;
     private bool useX;
     private bool useY;
     private CrossPlatformInputManager.VirtualAxis horizontalAxis;
@@ -43,11 +48,24 @@ public class InvectorCameraJoystick : MonoBehaviour, IPointerDownHandler, IPoint
 
         if (rectTransform != null)
         {
-            startPosition = rectTransform.anchoredPosition;
+            startLocalPosition = rectTransform.localPosition;
         }
 
         yield return new WaitForEndOfFrame();
         CreateVirtualAxes();
+    }
+
+    private void Update()
+    {
+        float t = 1f - Mathf.Exp(-smoothSpeed * Time.unscaledDeltaTime);
+        smoothedAxis = Vector2.Lerp(smoothedAxis, currentAxis, t);
+
+        if (!isPressed && smoothedAxis.sqrMagnitude < 0.0001f)
+        {
+            smoothedAxis = Vector2.zero;
+        }
+
+        UpdateVirtualAxes(smoothedAxis);
     }
 
     private void CreateVirtualAxes()
@@ -96,15 +114,15 @@ public class InvectorCameraJoystick : MonoBehaviour, IPointerDownHandler, IPoint
             return;
         }
 
-        Vector2 delta = Vector2.ClampMagnitude(localPoint - startPosition, movementRange);
-        rectTransform.anchoredPosition = startPosition + delta;
+        Vector2 delta = Vector2.ClampMagnitude(localPoint - (Vector2)startLocalPosition, movementRange);
+        rectTransform.localPosition = startLocalPosition + new Vector3(delta.x, delta.y, 0f);
 
-        Vector2 axis = movementRange > 0 ? delta / movementRange : Vector2.zero;
-        UpdateVirtualAxes(axis);
+        currentAxis = movementRange > 0 ? ApplyDeadZone(delta / movementRange) : Vector2.zero;
     }
 
     public void OnPointerDown(PointerEventData data)
     {
+        isPressed = true;
         OnDrag(data);
     }
 
@@ -112,9 +130,17 @@ public class InvectorCameraJoystick : MonoBehaviour, IPointerDownHandler, IPoint
     {
         if (rectTransform != null)
         {
-            rectTransform.anchoredPosition = startPosition;
+            rectTransform.localPosition = startLocalPosition;
         }
 
+        isPressed = false;
+        currentAxis = Vector2.zero;
+    }
+
+    private void OnDisable()
+    {
+        currentAxis = Vector2.zero;
+        smoothedAxis = Vector2.zero;
         UpdateVirtualAxes(Vector2.zero);
     }
 
@@ -129,5 +155,17 @@ public class InvectorCameraJoystick : MonoBehaviour, IPointerDownHandler, IPoint
         {
             verticalAxis.Update((invertY ? -axis.y : axis.y) * sensitivityY);
         }
+    }
+
+    private Vector2 ApplyDeadZone(Vector2 axis)
+    {
+        float magnitude = axis.magnitude;
+        if (magnitude <= deadZone)
+        {
+            return Vector2.zero;
+        }
+
+        float scaledMagnitude = Mathf.InverseLerp(deadZone, 1f, magnitude);
+        return axis.normalized * scaledMagnitude;
     }
 }

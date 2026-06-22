@@ -4,6 +4,7 @@ using Photon.Pun;
 using Photon.Realtime;
 using TMPro;
 using ASAD_Multiplyer.Network;
+using ASAD_Multiplyer.PlayerController;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.SceneManagement;
@@ -206,6 +207,7 @@ namespace ASAD_Multiplyer.Chat
                 SetActiveTab(ChatMode.Private);
                 RefreshUserList();
             }
+            PUN_NetworkManager.nm.myPlayer.GetComponent<PUN_SyncPlayer>().SetControl(!show);
         }
 
         public void OpenPublicChat()

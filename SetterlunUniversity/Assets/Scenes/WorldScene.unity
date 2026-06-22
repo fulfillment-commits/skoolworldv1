@@ -11566,9 +11566,25 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 2018073902}
     m_Modifications:
+    - target: {fileID: 1385092962691270, guid: bb1e5545f071a4d4082042807f8ccc85, type: 3}
+      propertyPath: m_Layer
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 1518367920824894, guid: bb1e5545f071a4d4082042807f8ccc85, type: 3}
+      propertyPath: m_Layer
+      value: 2
+      objectReference: {fileID: 0}
     - target: {fileID: 1973120614565466, guid: bb1e5545f071a4d4082042807f8ccc85, type: 3}
       propertyPath: m_Name
       value: Marker 4 Loop
+      objectReference: {fileID: 0}
+    - target: {fileID: 1973120614565466, guid: bb1e5545f071a4d4082042807f8ccc85, type: 3}
+      propertyPath: m_Layer
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 1988627660108108, guid: bb1e5545f071a4d4082042807f8ccc85, type: 3}
+      propertyPath: m_Layer
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 4289238006724254, guid: bb1e5545f071a4d4082042807f8ccc85, type: 3}
       propertyPath: m_LocalScale.x
@@ -12858,7 +12874,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &863758159
 Transform:
   m_ObjectHideFlags: 0
@@ -30149,7 +30165,7 @@ GameObject:
   - component: {fileID: 2018073904}
   - component: {fileID: 2018073903}
   - component: {fileID: 2018073906}
-  m_Layer: 0
+  m_Layer: 2
   m_Name: StairsTrigger
   m_TagString: Untagged
   m_Icon: {fileID: 0}
