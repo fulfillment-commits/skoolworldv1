@@ -122,6 +122,7 @@ public class InvectorCameraJoystick : MonoBehaviour, IPointerDownHandler, IPoint
 
     public void OnPointerDown(PointerEventData data)
     {
+        MobileUiInputBlocker.BeginBlock(data.pointerId);
         isPressed = true;
         OnDrag(data);
     }
@@ -135,10 +136,17 @@ public class InvectorCameraJoystick : MonoBehaviour, IPointerDownHandler, IPoint
 
         isPressed = false;
         currentAxis = Vector2.zero;
+        MobileUiInputBlocker.EndBlock(data.pointerId);
     }
 
     private void OnDisable()
     {
+        if (isPressed)
+        {
+            MobileUiInputBlocker.Clear();
+        }
+
+        isPressed = false;
         currentAxis = Vector2.zero;
         smoothedAxis = Vector2.zero;
         UpdateVirtualAxes(Vector2.zero);

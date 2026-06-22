@@ -7,11 +7,14 @@
     <list default="true" id="f976adce-1e4f-45bd-bef2-f7c88739f689" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/../.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/../.gitignore" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/.idea.SetterlunUniversity/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.SetterlunUniversity/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/ASAD_Multiplayer/Chat/Scripts/PUN_ChatManager.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/ASAD_Multiplayer/Chat/Scripts/PUN_ChatManager.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/ASAD_Multiplayer/NetworkScripts/PUN_NetworkManager.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/ASAD_Multiplayer/NetworkScripts/PUN_NetworkManager.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Modules/Core/Scripts/BackendSettings.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Modules/Core/Scripts/BackendSettings.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Scenes/Onboarding.unity" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scenes/Onboarding.unity" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/UserSettings/Layouts/CurrentMaximizeLayout.dwlt" beforeDir="false" afterPath="$PROJECT_DIR$/UserSettings/Layouts/CurrentMaximizeLayout.dwlt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Invector-3rdPersonController/Add-ons/Controller_Mobile/Basic/Scripts/InvectorCameraJoystick.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Invector-3rdPersonController/Add-ons/Controller_Mobile/Basic/Scripts/InvectorCameraJoystick.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Invector-3rdPersonController/Add-ons/Controller_Mobile/Basic/Scripts/InvectorJoystick.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Invector-3rdPersonController/Add-ons/Controller_Mobile/Basic/Scripts/InvectorJoystick.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Invector-3rdPersonController/Add-ons/Controller_Point&amp;Click/Basic/Scripts/vPointAndClickInput.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Invector-3rdPersonController/Add-ons/Controller_Point&amp;Click/Basic/Scripts/vPointAndClickInput.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Scripts/OnboardingManager.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/OnboardingManager.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Scripts/QuestSpawnManager.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/QuestSpawnManager.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Scripts/UI/LoginScreen.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/UI/LoginScreen.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Scripts/UI/SceneTransitionManager.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/UI/SceneTransitionManager.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Scripts/UI/ScreenManager.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/UI/ScreenManager.cs" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -127,7 +130,7 @@
       <workItem from="1781695096976" duration="3432000" />
       <workItem from="1781760485563" duration="15997000" />
       <workItem from="1781853819561" duration="9990000" />
-      <workItem from="1782109922123" duration="5004000" />
+      <workItem from="1782109922123" duration="6765000" />
     </task>
     <servers />
   </component>

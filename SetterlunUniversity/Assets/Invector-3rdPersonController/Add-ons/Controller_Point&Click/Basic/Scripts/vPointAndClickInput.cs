@@ -28,6 +28,12 @@ namespace Invector.vCharacterController.PointClick
         [Tooltip("Press and hold the Mouse Middle Button and rotate it to rotate the Camera")]
         public bool rotateCamera = true;
 
+        [Header("Tap Filtering")]
+        [Tooltip("Only create a movement target from a tap/click release. This prevents joystick drags from becoming move commands.")]
+        public bool requireTapToMove = true;
+        public float maxTapMovePixels = 18f;
+        public float maxTapDuration = 0.45f;
+
         [System.Serializable]
         public class vOnEnableCursor : UnityEngine.Events.UnityEvent<Vector3> { }
         [vEditorToolbar("Events")]
@@ -38,6 +44,11 @@ namespace Invector.vCharacterController.PointClick
         public Vector3 cursorPoint;
         public Collider target { get; set; }
         public Dictionary<string, vCursorByTag> customCursor;
+        private bool pointerStartedValid;
+        private bool hasActiveMousePointer;
+        private int activeTouchId = -1;
+        private Vector2 pointerStartPosition;
+        private float pointerStartTime;
 
         #endregion
 
@@ -75,38 +86,32 @@ namespace Invector.vCharacterController.PointClick
 
         protected virtual void PointAndClickMovement()
         {
-            
-            if (IsPointerOverUI())
-            {
-                return;
-            }
-            
-            
-            RaycastHit hit;
+            bool pointClickBlocked = IsPointClickBlocked();
 
-            if (Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out hit, Mathf.Infinity, clickMoveLayer))
+            if (!pointClickBlocked)
             {
-                var tag = hit.collider.gameObject.tag;
-                ChangeCursorByTag(tag);
-                CheckClickPoint(hit);
-                Debug.Log("click pos "+hit.transform.position);
+                UpdateCursorUnderPointer();
             }
+
+            HandlePointClickInput(pointClickBlocked);
             MoveToPoint();
         }
 
         protected bool IsPointerOverUI()
         {
-            // Mouse / Editor / PC
-            if (EventSystem.current != null && EventSystem.current.IsPointerOverGameObject())
+            if (EventSystem.current == null)
+            {
+                return false;
+            }
+
+            if (EventSystem.current.IsPointerOverGameObject())
             {
                 return true;
             }
 
-            // Mobile touch
-            if (Input.touchCount > 0)
+            for (int i = 0; i < Input.touchCount; i++)
             {
-                Touch touch = Input.GetTouch(0);
-
+                Touch touch = Input.GetTouch(i);
                 if (EventSystem.current != null && EventSystem.current.IsPointerOverGameObject(touch.fingerId))
                 {
                     return true;
@@ -115,6 +120,160 @@ namespace Invector.vCharacterController.PointClick
 
             return false;
         }
+
+        protected virtual bool IsPointClickBlocked()
+        {
+            return MobileUiInputBlocker.IsBlockingPointClick || IsPointerOverUI();
+        }
+
+        protected virtual void HandlePointClickInput(bool pointClickBlocked)
+        {
+            if (Input.touchCount > 0)
+            {
+                HandleTouchPointClick(pointClickBlocked);
+                return;
+            }
+
+            HandleMousePointClick(pointClickBlocked);
+        }
+
+        protected virtual void HandleMousePointClick(bool pointClickBlocked)
+        {
+            if (Input.GetMouseButtonDown(0))
+            {
+                hasActiveMousePointer = true;
+                pointerStartedValid = !pointClickBlocked;
+                pointerStartPosition = Input.mousePosition;
+                pointerStartTime = Time.unscaledTime;
+            }
+
+            if (Input.GetMouseButton(0) && hasActiveMousePointer && requireTapToMove)
+            {
+                if (Vector2.Distance(pointerStartPosition, Input.mousePosition) > maxTapMovePixels)
+                {
+                    pointerStartedValid = false;
+                }
+            }
+
+            if (!Input.GetMouseButtonUp(0))
+            {
+                return;
+            }
+
+            bool validTap = pointerStartedValid && IsValidTap(Input.mousePosition);
+            hasActiveMousePointer = false;
+            pointerStartedValid = false;
+
+            if (validTap && !IsPointClickBlocked())
+            {
+                TrySetTargetFromScreenPoint(Input.mousePosition);
+            }
+        }
+
+        protected virtual void HandleTouchPointClick(bool pointClickBlocked)
+        {
+            for (int i = 0; i < Input.touchCount; i++)
+            {
+                Touch touch = Input.GetTouch(i);
+
+                if (touch.phase == TouchPhase.Began && activeTouchId == -1)
+                {
+                    activeTouchId = touch.fingerId;
+                    pointerStartedValid = !pointClickBlocked && !IsPointerOverUI(touch.fingerId);
+                    pointerStartPosition = touch.position;
+                    pointerStartTime = Time.unscaledTime;
+                    continue;
+                }
+
+                if (touch.fingerId != activeTouchId)
+                {
+                    continue;
+                }
+
+                if ((touch.phase == TouchPhase.Moved || touch.phase == TouchPhase.Stationary) && requireTapToMove)
+                {
+                    if (Vector2.Distance(pointerStartPosition, touch.position) > maxTapMovePixels)
+                    {
+                        pointerStartedValid = false;
+                    }
+                }
+
+                if (touch.phase != TouchPhase.Ended && touch.phase != TouchPhase.Canceled)
+                {
+                    continue;
+                }
+
+                bool validTap = touch.phase == TouchPhase.Ended &&
+                                pointerStartedValid &&
+                                IsValidTap(touch.position) &&
+                                !IsPointerOverUI(touch.fingerId) &&
+                                !MobileUiInputBlocker.IsBlockingPointClick;
+
+                activeTouchId = -1;
+                pointerStartedValid = false;
+
+                if (validTap)
+                {
+                    TrySetTargetFromScreenPoint(touch.position);
+                }
+
+                return;
+            }
+        }
+
+        protected virtual bool IsValidTap(Vector2 endPosition)
+        {
+            if (!requireTapToMove)
+            {
+                return true;
+            }
+
+            float distance = Vector2.Distance(pointerStartPosition, endPosition);
+            float duration = Time.unscaledTime - pointerStartTime;
+            return distance <= maxTapMovePixels && duration <= maxTapDuration;
+        }
+
+        protected virtual bool IsPointerOverUI(int pointerId)
+        {
+            return EventSystem.current != null && EventSystem.current.IsPointerOverGameObject(pointerId);
+        }
+
+        protected virtual void UpdateCursorUnderPointer()
+        {
+            if (Input.touchCount > 0 || Camera.main == null)
+            {
+                return;
+            }
+
+            if (Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out RaycastHit hit, Mathf.Infinity, clickMoveLayer))
+            {
+                ChangeCursorByTag(hit.collider.gameObject.tag);
+            }
+        }
+
+        protected virtual void TrySetTargetFromScreenPoint(Vector2 screenPoint)
+        {
+            if (Camera.main == null)
+            {
+                return;
+            }
+
+            if (!Physics.Raycast(Camera.main.ScreenPointToRay(screenPoint), out RaycastHit hit, Mathf.Infinity, clickMoveLayer))
+            {
+                return;
+            }
+
+            target = hit.collider;
+
+            if (onEnableCursor != null)
+            {
+                onEnableCursor.Invoke(hit.point);
+            }
+
+            cursorPoint = hit.point;
+            ChangeCursorByTag(hit.collider.gameObject.tag);
+        }
+
         protected virtual void CheckClickPoint(RaycastHit hit)
         {
             if (Input.GetMouseButton(0))
@@ -150,12 +309,10 @@ namespace Invector.vCharacterController.PointClick
         {
             if (!NearPoint(cursorPoint, transform.position) && target)
             {
-                Debug.Log("click pos 22");
                 Vector3 dir = cursorPoint - transform.position;
                 dir = dir.normalized * Mathf.Clamp(dir.magnitude, 0f, 1f);
                 var targetDir = cc.isStrafing ? transform.InverseTransformDirection(dir).normalized : dir.normalized;
                 cc.input = targetDir;
-                Debug.Log("click pos 22 "+targetDir);
             }
             else
             {

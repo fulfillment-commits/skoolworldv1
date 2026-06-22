@@ -114,18 +114,7 @@ public class QuestSpawnManager : MonoBehaviour
         // 1. Show Loading Screen immediately
         if (ScreenManager.Instance != null)
         {
-            var loading = ScreenManager.Instance.GetLoadingScreen();
-            if (loading != null)
-            {
-                // We use a callback to ensure the loading screen only hides AFTER the scene is ready
-                loading.StartLoading(() => {
-                    // This callback runs when the simulated loading is "Complete!"
-                    Debug.Log($"[QuestSpawnManager] Transition to {sceneName} complete.");
-                }, "Loading Environment...");
-            }
-            
-            // 2. Hide current screen (Avatar etc)
-            ScreenManager.Instance.HideCurrentScreen();
+            ScreenManager.Instance.ShowLoadingScreen("Loading Environment...");
         }
 
         // 3. Perform the actual transition (Disable fade for Loading Screen transitions)

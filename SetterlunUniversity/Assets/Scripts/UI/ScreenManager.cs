@@ -15,6 +15,7 @@ public class ScreenManager : MonoBehaviour
     private Dictionary<ScreenType, ScreenBase> screenDictionary = new Dictionary<ScreenType, ScreenBase>();
     private ScreenType currentScreen = ScreenType.None;
     private ScreenType previousScreen = ScreenType.None;
+    private const string PlayerPrefsRememberMe = "OnboardingRememberMe";
 
     public event Action<ScreenType> OnScreenChanged;
 
@@ -50,8 +51,15 @@ public class ScreenManager : MonoBehaviour
             screen.gameObject.SetActive(false);
         }
 
-        // Start with Welcome or Login
-        ShowScreen(ScreenType.Welcome);
+        if (PlayerPrefs.GetInt(PlayerPrefsRememberMe, 0) == 1)
+        {
+            ShowLoadingScreen("Restoring session...");
+        }
+        else
+        {
+            ShowScreen(ScreenType.Welcome);
+        }
+
         UpdatePlayerInputState();
     }
 

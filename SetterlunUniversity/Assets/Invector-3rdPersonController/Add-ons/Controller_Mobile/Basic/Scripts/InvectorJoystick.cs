@@ -24,6 +24,7 @@ public class InvectorJoystick : MonoBehaviour, IPointerDownHandler, IPointerUpHa
     bool m_UseY; // Toggle for using the Y axis
     CrossPlatformInputManager.VirtualAxis m_HorizontalVirtualAxis; // Reference to the joystick in the cross platform input
     CrossPlatformInputManager.VirtualAxis m_VerticalVirtualAxis; // Reference to the joystick in the cross platform input
+    bool m_IsPressed;
 
     IEnumerator Start()
     {
@@ -110,6 +111,8 @@ public class InvectorJoystick : MonoBehaviour, IPointerDownHandler, IPointerUpHa
     {        
         transform.localPosition = m_StartPos;
         UpdateVirtualAxes(m_StartPos);
+        m_IsPressed = false;
+        MobileUiInputBlocker.EndBlock(data.pointerId);
 
         //if (!string.IsNullOrEmpty(pressButtonName))
         //{
@@ -119,9 +122,23 @@ public class InvectorJoystick : MonoBehaviour, IPointerDownHandler, IPointerUpHa
 
     public void OnPointerDown(PointerEventData data)
     {
+        m_IsPressed = true;
+        MobileUiInputBlocker.BeginBlock(data.pointerId);
         //if (!string.IsNullOrEmpty(pressButtonName))
         //{
         //    CrossPlatformInputManager.SetButtonDown(pressButtonName);
         //}
+    }
+
+    private void OnDisable()
+    {
+        if (m_IsPressed)
+        {
+            MobileUiInputBlocker.Clear();
+        }
+
+        m_IsPressed = false;
+        transform.localPosition = m_StartPos;
+        UpdateVirtualAxes(m_StartPos);
     }
 }

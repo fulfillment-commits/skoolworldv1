@@ -10,6 +10,8 @@ public class SceneTransitionManager : MonoBehaviour
     [Header("Fade Settings")]
     [SerializeField] private CanvasGroup fadeCanvasGroup;
     [SerializeField] private float fadeDuration = 0.5f;
+    [SerializeField] private float sceneReadyDelay = 0.5f;
+    [SerializeField] private int setupFramesAfterSceneLoad = 2;
 
     private void Awake()
     {
@@ -112,11 +114,11 @@ public class SceneTransitionManager : MonoBehaviour
 
         while (!asyncLoad.isDone)
         {
+            UpdateLoadingProgress(asyncLoad.progress);
             yield return null;
         }
 
-        // Wait for at least 0.5 seconds after loading successfully as requested
-        yield return new WaitForSeconds(0.5f);
+        yield return StartCoroutine(WaitForSceneReady(sceneName));
 
         // Fade In (Only if requested)
         if (useFade && fadeCanvasGroup != null)
@@ -148,6 +150,40 @@ public class SceneTransitionManager : MonoBehaviour
                     OnboardingManager.Instance.ShowNextIncompleteQuest();
                 }
             }
+        }
+    }
+
+    private IEnumerator WaitForSceneReady(string sceneName)
+    {
+        while (SceneManager.GetActiveScene().name != sceneName || !SceneManager.GetActiveScene().isLoaded)
+        {
+            yield return null;
+        }
+
+        for (int i = 0; i < setupFramesAfterSceneLoad; i++)
+        {
+            yield return new WaitForEndOfFrame();
+        }
+
+        if (sceneReadyDelay > 0f)
+        {
+            yield return new WaitForSeconds(sceneReadyDelay);
+        }
+
+        UpdateLoadingProgress(1f);
+    }
+
+    private static void UpdateLoadingProgress(float progress)
+    {
+        if (ScreenManager.Instance == null)
+        {
+            return;
+        }
+
+        LoadingScreen loading = ScreenManager.Instance.GetLoadingScreen();
+        if (loading != null)
+        {
+            loading.SetProgress(Mathf.Clamp01(progress));
         }
     }
 

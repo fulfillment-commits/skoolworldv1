@@ -115,10 +115,10 @@ public class LoginScreen : ScreenBase
 
     private void HandleSuccessfulBackendLogin(BackendResponse response)
     { 
-        ShowSuccess("Login successful! Welcome back.");
-
         if (!string.IsNullOrEmpty(response.userId))
         {
+            ScreenManager.Instance?.ShowLoadingScreen("Preparing world...");
+
             // Save avatar index for the selection screen
             PlayerPrefs.SetInt("OnboardingAvatarIndex", response.avatar_index);
             PlayerPrefs.Save();
@@ -127,7 +127,7 @@ public class LoginScreen : ScreenBase
             OnboardingManager.Instance?.Initialize(response.userId, response.username, response.email);
             OnboardingManager.Instance?.SetRememberMe(pendingRememberMe);
 
-            StartCoroutine(GoToNextScreenAfterDelay(response));
+            OnboardingManager.Instance?.ContinueAfterLogin(response);
         }
         else
         {
@@ -156,12 +156,6 @@ public class LoginScreen : ScreenBase
         //}
 
         return true;
-    }
-
-    private IEnumerator GoToNextScreenAfterDelay(BackendResponse response)
-    {
-        yield return new WaitForSeconds(1.2f);
-        OnboardingManager.Instance?.ContinueAfterLogin(response);
     }
 
     private void OnRegisterClicked()

@@ -14483,8 +14483,8 @@ GameObject:
   - component: {fileID: 991064048}
   - component: {fileID: 991064051}
   - component: {fileID: 991064050}
-  - component: {fileID: 991064049}
   - component: {fileID: 991064052}
+  - component: {fileID: 991064053}
   m_Layer: 2
   m_Name: Lobby
   m_TagString: Teleport
@@ -14501,34 +14501,13 @@ Transform:
   m_GameObject: {fileID: 991064047}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 1, z: 0, w: 0}
-  m_LocalPosition: {x: -1.3691, y: 9.7972, z: -55.3}
+  m_LocalPosition: {x: -0.86, y: 9.7972, z: -57.42}
   m_LocalScale: {x: 3.2212303, y: 6.687701, z: 2.5258486}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1334431278}
   m_Father: {fileID: 863758159}
   m_LocalEulerAnglesHint: {x: 0, y: 180, z: 0}
---- !u!65 &991064049
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 991064047}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 1
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Size: {x: 1.4556674, y: 0.99999976, z: 2.235098}
-  m_Center: {x: -0.07661971, y: 0, z: 0.61754906}
 --- !u!23 &991064050
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -14593,6 +14572,27 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   targetScene: Lobby
   spawnPointName: 
+--- !u!135 &991064053
+SphereCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 991064047}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Radius: 0.2649508
+  m_Center: {x: 0, y: -0.23504919, z: 0}
 --- !u!1001 &1001966327
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -19576,7 +19576,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4289238006724254, guid: bb1e5545f071a4d4082042807f8ccc85, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -0.11
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4289238006724254, guid: bb1e5545f071a4d4082042807f8ccc85, type: 3}
       propertyPath: m_LocalPosition.y
@@ -19584,7 +19584,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4289238006724254, guid: bb1e5545f071a4d4082042807f8ccc85, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 0.83
+      value: -0.2
       objectReference: {fileID: 0}
     - target: {fileID: 4289238006724254, guid: bb1e5545f071a4d4082042807f8ccc85, type: 3}
       propertyPath: m_LocalRotation.w

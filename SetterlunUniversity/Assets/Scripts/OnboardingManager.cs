@@ -200,6 +200,11 @@ public class OnboardingManager : MonoBehaviour
 
         if (HasSelectedAvatar(response))
         {
+            if (ScreenManager.Instance != null)
+            {
+                ScreenManager.Instance.ShowLoadingScreen("Preparing world...");
+            }
+
             EnterWorldWhenNetworkPlayerReady();
             return;
         }
@@ -370,8 +375,6 @@ public class OnboardingManager : MonoBehaviour
             }
 
             SceneTransitionManager.Instance.TransitionToScene("WorldScene", spawnPointName, false);
-            
-            if (loading != null) loading.Hide();
             yield break;
         }
 
