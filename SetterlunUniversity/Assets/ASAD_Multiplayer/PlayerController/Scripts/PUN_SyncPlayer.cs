@@ -397,7 +397,12 @@ namespace ASAD_Multiplyer.PlayerController
 
         private void SetCurrentSceneProperty(string sceneName)
         {
-            if (!PhotonNetwork.IsConnected || view == null || !view.IsMine)
+            if (!PhotonNetwork.IsConnected ||
+                !PhotonNetwork.InRoom ||
+                PhotonNetwork.NetworkClientState != ClientState.Joined ||
+                PhotonNetwork.LocalPlayer == null ||
+                view == null ||
+                !view.IsMine)
             {
                 return;
             }

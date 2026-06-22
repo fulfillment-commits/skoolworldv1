@@ -55,5 +55,24 @@ public class BackendSettings
     }
 
     public IBackendService Service => currentService;
+
+    public static void ResetForLogout()
+    {
+        if (instance == null)
+        {
+            return;
+        }
+
+        instance.currentService = null;
+        instance.config = null;
+
+        if (instance.runner != null)
+        {
+            Object.Destroy(instance.runner);
+            instance.runner = null;
+        }
+
+        instance = null;
+    }
 }
 

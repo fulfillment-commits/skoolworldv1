@@ -286,6 +286,43 @@ namespace ASAD_Multiplyer.Network
             PhotonNetwork.LeaveRoom();
         }
 
+        public void ShutdownForLogout()
+        {
+            _connecting = false;
+            _connectStatus = "Logging out";
+
+            if (myPlayer != null)
+            {
+                PhotonView playerView = myPlayer.GetComponent<PhotonView>();
+                try
+                {
+                    if (PhotonNetwork.InRoom && playerView != null && playerView.IsMine)
+                    {
+                        PhotonNetwork.Destroy(myPlayer);
+                    }
+                    else
+                    {
+                        Destroy(myPlayer);
+                    }
+                }
+                catch (Exception exception)
+                {
+                    Debug.LogWarning($"[PUN_NetworkManager] Could not destroy network player cleanly during logout: {exception.Message}");
+                    Destroy(myPlayer);
+                }
+
+                myPlayer = null;
+            }
+
+            PhotonNetwork.AuthValues = null;
+            PhotonNetwork.NickName = string.Empty;
+
+            if (PhotonNetwork.IsConnected)
+            {
+                PhotonNetwork.Disconnect();
+            }
+        }
+
         public int GetPlayerCount()
         {
             return PhotonNetwork.CurrentRoom.PlayerCount;
@@ -514,5 +551,13 @@ namespace ASAD_Multiplyer.Network
         }
         
         #endregion
+
+        private void OnDestroy()
+        {
+            if (nm == this)
+            {
+                nm = null;
+            }
+        }
     }
 }

@@ -112,6 +112,51 @@ namespace ASAD_Multiplyer.Chat
             RefreshUserList();
         }
 
+        public void ShutdownForLogout()
+        {
+            StopRefreshRoutine();
+            StopAllCoroutines();
+            refreshRoutine = null;
+            isLoadingMessages = false;
+            isSendingMessage = false;
+
+            activePlayer = null;
+            activeUserId = "";
+            activeDisplayName = "";
+            activeChatMode = ChatMode.Private;
+
+            unreadUserIds.Clear();
+            unreadRequestsInFlight.Clear();
+            renderedMessageIds.Clear();
+
+            foreach (PUN_ChatListItem item in visiblePlayers.Values)
+            {
+                if (item != null)
+                {
+                    Destroy(item.gameObject);
+                }
+            }
+
+            visiblePlayers.Clear();
+            ClearMessages();
+            SetStatus("");
+            SetSendInteractable(true);
+            SetChatVisible(false);
+            SetUserListVisible(false);
+            SetJoinedUiVisible(false);
+            UpdateUnreadIndicators();
+        }
+
+        private void OnDestroy()
+        {
+            if (Instance == this)
+            {
+                Instance = null;
+            }
+
+            StopRefreshRoutine();
+        }
+
         private void Update()
         {
             RefreshVisibility();

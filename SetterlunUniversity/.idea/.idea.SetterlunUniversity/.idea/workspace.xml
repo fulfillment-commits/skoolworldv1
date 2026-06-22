@@ -7,25 +7,11 @@
     <list default="true" id="f976adce-1e4f-45bd-bef2-f7c88739f689" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/../.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/../.gitignore" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/.idea.SetterlunUniversity/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.SetterlunUniversity/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/ASAD_Multiplayer/PlayerController/Resources/vBasicController_BSMC_CharacterBase.prefab" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/ASAD_Multiplayer/PlayerController/Resources/vBasicController_BSMC_CharacterBase.prefab" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/ASAD_Multiplayer/PlayerController/Scripts/PUN_SyncPlayer.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/ASAD_Multiplayer/PlayerController/Scripts/PUN_SyncPlayer.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Invector-3rdPersonController/Add-ons/Controller_Mobile/Basic/Scripts/InvectorCameraJoystick.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Invector-3rdPersonController/Add-ons/Controller_Mobile/Basic/Scripts/InvectorCameraJoystick.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Invector-3rdPersonController/Basic Locomotion/3D Models/Characters/Invector@V-Bot/FBX/Materials/V-bot-texture.mat" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Invector-3rdPersonController/Basic Locomotion/3D Models/Characters/Invector@V-Bot/FBX/Materials/V-bot-texture.mat" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Invector-3rdPersonController/Basic Locomotion/3D Models/Textures/prototype_textures/Materials/carbon.mat" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Invector-3rdPersonController/Basic Locomotion/3D Models/Textures/prototype_textures/Materials/carbon.mat" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Invector-3rdPersonController/Basic Locomotion/3D Models/Textures/prototype_textures/Materials/proto_gray 1.mat" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Invector-3rdPersonController/Basic Locomotion/3D Models/Textures/prototype_textures/Materials/proto_gray 1.mat" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Invector-3rdPersonController/Basic Locomotion/Editor.meta" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Invector-3rdPersonController/Basic Locomotion/Editor.meta" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Invector-3rdPersonController/Basic Locomotion/HUD/guide-texts/Materials/45.mat" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Invector-3rdPersonController/Basic Locomotion/HUD/guide-texts/Materials/45.mat" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Invector-3rdPersonController/Basic Locomotion/HUD/guide-texts/Materials/50.mat" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Invector-3rdPersonController/Basic Locomotion/HUD/guide-texts/Materials/50.mat" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Invector-3rdPersonController/Basic Locomotion/HUD/guide-texts/Materials/60.mat" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Invector-3rdPersonController/Basic Locomotion/HUD/guide-texts/Materials/60.mat" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Invector-3rdPersonController/Basic Locomotion/HUD/guide-texts/Materials/climb.mat" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Invector-3rdPersonController/Basic Locomotion/HUD/guide-texts/Materials/climb.mat" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Invector-3rdPersonController/Basic Locomotion/HUD/guide-texts/Materials/crouch.mat" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Invector-3rdPersonController/Basic Locomotion/HUD/guide-texts/Materials/crouch.mat" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Invector-3rdPersonController/Basic Locomotion/HUD/guide-texts/Materials/jumpover.mat" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Invector-3rdPersonController/Basic Locomotion/HUD/guide-texts/Materials/jumpover.mat" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Invector-3rdPersonController/Basic Locomotion/HUD/guide-texts/Materials/ragdoll.mat" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Invector-3rdPersonController/Basic Locomotion/HUD/guide-texts/Materials/ragdoll.mat" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Invector-3rdPersonController/Basic Locomotion/HUD/guide-texts/Materials/stepup.mat" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Invector-3rdPersonController/Basic Locomotion/HUD/guide-texts/Materials/stepup.mat" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/ASAD_Multiplayer/Chat/Scripts/PUN_ChatManager.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/ASAD_Multiplayer/Chat/Scripts/PUN_ChatManager.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/ASAD_Multiplayer/NetworkScripts/PUN_NetworkManager.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/ASAD_Multiplayer/NetworkScripts/PUN_NetworkManager.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Modules/Core/Scripts/BackendSettings.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Modules/Core/Scripts/BackendSettings.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Assets/Scenes/Onboarding.unity" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scenes/Onboarding.unity" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/UserSettings/EditorUserSettings.asset" beforeDir="false" afterPath="$PROJECT_DIR$/UserSettings/EditorUserSettings.asset" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/UserSettings/Layouts/CurrentMaximizeLayout.dwlt" beforeDir="false" afterPath="$PROJECT_DIR$/UserSettings/Layouts/CurrentMaximizeLayout.dwlt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/UserSettings/Layouts/default-2022.dwlt" beforeDir="false" afterPath="$PROJECT_DIR$/UserSettings/Layouts/default-2022.dwlt" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -141,7 +127,7 @@
       <workItem from="1781695096976" duration="3432000" />
       <workItem from="1781760485563" duration="15997000" />
       <workItem from="1781853819561" duration="9990000" />
-      <workItem from="1782109922123" duration="1181000" />
+      <workItem from="1782109922123" duration="5004000" />
     </task>
     <servers />
   </component>
