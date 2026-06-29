@@ -543,6 +543,11 @@ namespace ASAD_Multiplyer.PlayerController
                 return;
             }
 
+            TeleportLocalPlayerTo(targetPosition.position, targetPosition.rotation);
+        }
+
+        public void TeleportLocalPlayerTo(Vector3 position, Quaternion rotation)
+        {
             if (PhotonNetwork.IsConnected && view != null && !view.IsMine)
             {
                 CustomDebug.Log("[NetworkTeleport] Ignored teleport request on a non-owned player.");
@@ -565,12 +570,12 @@ namespace ASAD_Multiplyer.PlayerController
             if (_controller != null)
             {
                 _controller.StopCharacter();
-                _controller.MoveToPositionRotaion(targetPosition);
+                transform.SetPositionAndRotation(position, rotation);
             }
             else
             {
-                transform.position = targetPosition.position;
-                transform.rotation = targetPosition.rotation;
+                transform.position = position;
+                transform.rotation = rotation;
             }
 
             ResetLocalMotion();
@@ -588,6 +593,13 @@ namespace ASAD_Multiplyer.PlayerController
         {
             if (_body == null)
             {
+                return;
+            }
+
+            if (_body.isKinematic)
+            {
+                _body.position = transform.position;
+                _body.rotation = transform.rotation;
                 return;
             }
 
@@ -641,8 +653,12 @@ namespace ASAD_Multiplyer.PlayerController
 
             if (_body != null)
             {
-                _body.velocity = Vector3.zero;
-                _body.angularVelocity = Vector3.zero;
+                if (!_body.isKinematic)
+                {
+                    _body.velocity = Vector3.zero;
+                    _body.angularVelocity = Vector3.zero;
+                }
+
                 _body.position = position;
                 _body.rotation = rotation;
             }

@@ -64,24 +64,26 @@ public class PlayerTeleport : MonoBehaviour
 
     void Update()
     {
-        if (isInsideTrigger && currentTrigger != null && GamePlayUIManager.Instance != null && GamePlayUIManager.Instance.Door != null)
-        {
-            // Check direction relative to trigger
-            float playerZ = transform.forward.z;
-            float triggerZ = currentTrigger.forward.z;
-
-            // Show button if facing the same direction as trigger forward
-            if (playerZ * triggerZ > 0)
-            {
-                if (!GamePlayUIManager.Instance.Door.activeSelf)
-                    GamePlayUIManager.Instance.Door.SetActive(true);
-            }
-            else
-            {
-                if (GamePlayUIManager.Instance.Door.activeSelf)
-                    GamePlayUIManager.Instance.Door.SetActive(false);
-            }
-        }
+        // if (isInsideTrigger && currentTrigger != null && GamePlayUIManager.Instance != null && GamePlayUIManager.Instance.Door != null)
+        // {
+        //     // Check direction relative to trigger
+        //     float playerZ = transform.forward.z;
+        //     float triggerZ = currentTrigger.forward.z;
+        //
+        //     // Show button if facing the same direction as trigger forward
+        //     if (playerZ * triggerZ > 0)
+        //     {
+        //         if (!GamePlayUIManager.Instance.Door.activeSelf)
+        
+                    if(isInsideTrigger)
+                       GamePlayUIManager.Instance.Door.SetActive(true);
+            // }
+            // else
+            // {
+            //     if (GamePlayUIManager.Instance.Door.activeSelf)
+            //         GamePlayUIManager.Instance.Door.SetActive(false);
+            // }
+        // }
     }
 
     void OnTriggerEnter(Collider other)

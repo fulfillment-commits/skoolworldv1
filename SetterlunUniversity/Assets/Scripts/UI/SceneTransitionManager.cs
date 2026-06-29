@@ -138,13 +138,12 @@ public class SceneTransitionManager : MonoBehaviour
             var loading = ScreenManager.Instance.GetLoadingScreen();
             if (loading != null) loading.Hide();
 
-            // Always show MainWorld HUD if onboarding is still in progress, regardless of scene
             bool allQuestsCompleted = OnboardingQuestManager.Instance != null && OnboardingQuestManager.Instance.GetCompletedQuestCount() >= 10;
+            ScreenManager.Instance.ShowScreen(ScreenType.MainWorld);
+
+            // Also auto-show the specific quest screen only while onboarding is still in progress.
             if (!allQuestsCompleted)
             {
-                ScreenManager.Instance.ShowScreen(ScreenType.MainWorld);
-                
-                // Also auto-show the specific quest screen (like Quest 1)
                 if (OnboardingManager.Instance != null)
                 {
                     OnboardingManager.Instance.ShowNextIncompleteQuest();
