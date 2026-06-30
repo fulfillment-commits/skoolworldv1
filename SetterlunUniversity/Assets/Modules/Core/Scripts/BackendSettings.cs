@@ -23,14 +23,13 @@ public class BackendSettings
     private void Initialize()
     {
         config = Resources.Load<BackendConfig>("BackendConfig");
-        
+
         if (config == null)
         {
-            Debug.LogError("❌ [BackendSettings] BackendConfig not found in Resources! Please open Setterlun -> Backend Settings to create it.");
+            Debug.LogError("[BackendSettings] BackendConfig not found in Resources. Open Setterlun -> Backend Settings to create it.");
             return;
         }
 
-        // Create a hidden runner for coroutines if needed
         runner = new GameObject("BackendRunner");
         Object.DontDestroyOnLoad(runner);
         runner.hideFlags = HideFlags.HideAndDontSave;
@@ -38,19 +37,24 @@ public class BackendSettings
         if (config.activeBackend == BackendType.LocalDemo || ApiConfig.UseLocalDemoMode)
         {
             currentService = runner.AddComponent<LocalDemoBackendImplementation>();
-            Debug.Log("🏠 [BackendSettings] Active Backend: Local Demo (PlayerPrefs)");
+            Debug.Log("[BackendSettings] Active Backend: Local Demo (PlayerPrefs)");
         }
         else if (config.activeBackend == BackendType.Firebase)
         {
             var fb = runner.AddComponent<FirebaseBackendImplementation>();
             fb.Setup(config.GetFirebaseConfigJson());
             currentService = fb;
-            Debug.Log("🔥 [BackendSettings] Active Backend: Firebase");
+            Debug.Log("[BackendSettings] Active Backend: Firebase");
+        }
+        else if (config.activeBackend == BackendType.PortalBridge)
+        {
+            currentService = runner.AddComponent<PortalBridgeBackendImplementation>();
+            Debug.Log("[BackendSettings] Active Backend: Portal Bridge");
         }
         else
         {
             currentService = runner.AddComponent<CustomAPIBackendImplementation>();
-            Debug.Log("🌐 [BackendSettings] Active Backend: Custom API");
+            Debug.Log("[BackendSettings] Active Backend: Custom API");
         }
     }
 
@@ -75,4 +79,3 @@ public class BackendSettings
         instance = null;
     }
 }
-

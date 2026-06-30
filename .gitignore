@@ -37,3 +37,5 @@ sysinfo.txt
 *.symbols
 Assets/_TerrainAutoUpgrade
 Assets/_TerrainAutoUpgrade.meta
+# Local Netlify folder
+.netlify

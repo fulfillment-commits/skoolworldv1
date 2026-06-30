@@ -2,5 +2,6 @@ public enum BackendType
 {
     CustomAPI,
     Firebase,
-    LocalDemo
+    LocalDemo,
+    PortalBridge
 }

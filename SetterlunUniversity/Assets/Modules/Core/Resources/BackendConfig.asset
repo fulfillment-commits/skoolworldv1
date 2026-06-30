@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 14ab26bf10b2b1a4c8eb5dbeee4a5675, type: 3}
   m_Name: BackendConfig
   m_EditorClassIdentifier: 
-  activeBackend: 1
+  activeBackend: 3
   apiKey: AIzaSyCDAwzCloZf00baxR7nIREY9Mx1aE73krU
   authDomain: setterlun-university.firebaseapp.com
   projectId: setterlun-university

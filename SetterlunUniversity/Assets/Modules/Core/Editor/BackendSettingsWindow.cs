@@ -86,7 +86,7 @@ public class BackendSettingsWindow : EditorWindow
         }
 
         EditorGUILayout.Space(20);
-        EditorGUILayout.HelpBox("This setting controls whether the app uses Firebase or the Custom API for all data operations.", MessageType.Info);
+        EditorGUILayout.HelpBox("This setting controls whether the app uses Local Demo, Firebase, Custom API, or the React Portal Bridge for data operations.", MessageType.Info);
         
         if (GUILayout.Button("Force Refresh", GUILayout.Height(30)))
         {

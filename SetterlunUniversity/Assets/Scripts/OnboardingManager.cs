@@ -125,6 +125,12 @@ public class OnboardingManager : MonoBehaviour
 
     private bool ShouldAttemptRememberedLogin()
     {
+        BackendConfig backendConfig = Resources.Load<BackendConfig>("BackendConfig");
+        if (backendConfig != null && backendConfig.activeBackend == BackendType.PortalBridge)
+        {
+            return true;
+        }
+
         if (PlayerPrefs.GetInt(PLAYERPREFS_REMEMBER_ME, 0) != 1)
         {
             return false;
