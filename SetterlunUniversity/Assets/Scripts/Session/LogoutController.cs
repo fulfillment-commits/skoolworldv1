@@ -58,17 +58,17 @@ public class LogoutController : MonoBehaviour
 
     private bool isLoggingOut;
 
-    [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
-    private static void EnsureRuntimeInstance()
-    {
-        if (Instance != null || FindObjectOfType<LogoutController>() != null)
-        {
-            return;
-        }
-
-        GameObject controllerObject = new GameObject("LogoutController");
-        controllerObject.AddComponent<LogoutController>();
-    }
+    // [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
+    // private static void EnsureRuntimeInstance()
+    // {
+    //     if (Instance != null || FindObjectOfType<LogoutController>() != null)
+    //     {
+    //         return;
+    //     }
+    //
+    //     GameObject controllerObject = new GameObject("LogoutController");
+    //     controllerObject.AddComponent<LogoutController>();
+    // }
 
     private void Awake()
     {
