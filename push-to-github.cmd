@@ -47,7 +47,7 @@ if not defined DEPLOY_COMMIT goto fail
 git update-ref refs/heads/master !DEPLOY_COMMIT! || exit /b 1
 
 echo Pushing deploy-only master to GitHub...
-git push github master !LEASE_ARG! || exit /b 1
+git push !LEASE_ARG! github master || exit /b 1
 
 if exist "%TEMP_INDEX%" del /f /q "%TEMP_INDEX%"
 
