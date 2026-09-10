@@ -247,6 +247,32 @@
       var lastWindowHeight = window.innerHeight;
       var rotationAttempted = false;
       var pendingPortalMessages = [];
+      var allowedPortalOrigins = [
+        "http://localhost:5173",
+        "https://skool-olive.vercel.app"
+      ];
+      var activePortalOrigin = null;
+
+      function getReferrerOrigin() {
+        try {
+          if (!document.referrer) {
+            return null;
+          }
+
+          var referrerOrigin = new URL(document.referrer).origin;
+          return allowedPortalOrigins.indexOf(referrerOrigin) !== -1 ? referrerOrigin : null;
+        } catch (error) {
+          return null;
+        }
+      }
+
+      function getPortalTargetOrigin() {
+        if (activePortalOrigin && allowedPortalOrigins.indexOf(activePortalOrigin) !== -1) {
+          return activePortalOrigin;
+        }
+
+        return getReferrerOrigin();
+      }
 
       function unityShowBanner(msg, type) {
         function updateBannerVisibility() {
@@ -275,11 +301,16 @@
           return;
         }
 
+        var targetOrigin = getPortalTargetOrigin();
+        if (!targetOrigin) {
+          return;
+        }
+
         window.parent.postMessage({
           source: "setterlun-unity",
           type: type,
           payload: payload || {}
-        }, "*");
+        }, targetOrigin);
       }
 
       function forwardPortalMessageToUnity(data) {
@@ -303,6 +334,16 @@
       }
 
       window.addEventListener("message", function(event) {
+        if (event.source !== window.parent) {
+          return;
+        }
+
+        if (allowedPortalOrigins.indexOf(event.origin) === -1) {
+          return;
+        }
+
+        activePortalOrigin = event.origin;
+
         var data = event.data;
         if (typeof data === "string") {
           try {
