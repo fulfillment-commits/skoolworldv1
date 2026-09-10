@@ -1,0 +1,7 @@
+Build/*.data filter=lfs diff=lfs merge=lfs -text
+Build/*.wasm filter=lfs diff=lfs merge=lfs -text
+Build/*.bundle filter=lfs diff=lfs merge=lfs -text
+Build/*.unityweb filter=lfs diff=lfs merge=lfs -text
+Build/*.br filter=lfs diff=lfs merge=lfs -text
+Build/*.gz filter=lfs diff=lfs merge=lfs -text
+StreamingAssets/*.mp4 filter=lfs diff=lfs merge=lfs -text
