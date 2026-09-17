@@ -25,6 +25,16 @@ if errorlevel 1 (
   echo No source commit needed. The build folder is already committed.
 )
 
+for /f "tokens=1" %%H in ('git ls-remote --heads github main') do set "REMOTE_MAIN=%%H"
+if defined REMOTE_MAIN (
+  set "MAIN_LEASE_ARG=--force-with-lease=main:!REMOTE_MAIN!"
+) else (
+  set "MAIN_LEASE_ARG="
+)
+
+echo Pushing full project source to GitHub main...
+git push !MAIN_LEASE_ARG! github HEAD:main || exit /b 1
+
 for /f "tokens=1" %%H in ('git ls-remote --heads github master') do set "REMOTE_MASTER=%%H"
 if defined REMOTE_MASTER (
   set "LEASE_ARG=--force-with-lease=master:!REMOTE_MASTER!"
